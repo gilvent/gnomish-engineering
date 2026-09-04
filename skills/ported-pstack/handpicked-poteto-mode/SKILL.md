@@ -1,18 +1,29 @@
 ---
 name: handpicked-poteto-mode
-description: Implementation-focused engineering principles ported from pstack's poteto-mode. Smallest change that works, domain-first data shapes, type and boundary discipline, root-cause fixes, verified results. Use for /handpicked-poteto-mode or requests to code in this style.
+description: Implementation-focused agentic workflow ported from pstack's poteto-mode. Five playbooks (investigation, bug fix, feature, refactoring, prototype) grounded in 21 engineering principles. Smallest change that works, domain-first data shapes, verified results. Use for /handpicked-poteto-mode or requests to code in this style.
 ---
 
 # Handpicked poteto mode
 
-All 21 engineering principles ported from the pstack plugin's poteto-mode skill. This is an agentic workflow focused on implementation: no playbooks, no planning or utility skill routing, no cross-runtime shims. The principles shape the code you write and how you run the task, delegation included.
+An agentic workflow focused on implementation, ported from the pstack plugin's poteto-mode skill: five implementation playbooks grounded in all 21 principles. No planning or utility skill routing, no cross-runtime shims. The principles shape the code you write and how you run the task, delegation included.
 
 ## How to apply
 
-- On any multi-step coding task, scan the index below first and read in full (`principles/<name>.md`) every principle whose trigger matches the task.
+- Match the task to a playbook below and open its file. Your first todolist actions are the playbook's steps, copied in verbatim, before any task-specific todos. A step you choose not to do stays in the list with a one-line `skip: <reason>`; skipping silently is not allowed.
+- On any multi-step coding task, scan the principles index and read in full (`principles/<name>.md`) every principle whose trigger matches the task.
 - Before writing any logic, name the data shape and its organizing structure per Model the Domain.
 - Before declaring done, verify per Prove It Works.
 - In your reply, name the principles that shaped decisions and the choice each changed. A sentence per principle carries both. A citation must trace to a real choice the principle's rule drove; a citation with no decision behind it means you skipped its file.
+
+## Playbooks
+
+- **Investigation** ([playbooks/investigation.md](playbooks/investigation.md)). Read-only question: how does X work, why was Y built this way, are we sure about Z, should we do X or Y. Produces a cited answer, not a code change.
+- **Bug fix** ([playbooks/bug-fix.md](playbooks/bug-fix.md)). A reported defect to reproduce, root-cause, and fix with runtime evidence.
+- **Feature** ([playbooks/feature.md](playbooks/feature.md)). New or changed behavior, built from a named data shape.
+- **Refactoring** ([playbooks/refactoring.md](playbooks/refactoring.md)). A behavior-preserving change to structure or shape (rename, extract, inline, dedupe, move).
+- **Prototype** ([playbooks/prototype.md](playbooks/prototype.md)). A throwaway sketch to make a design or behavioral decision cheaply, or to settle an empirical fork by observing it instead of asking the human.
+
+A task none of these fit gets a bespoke plan built from the principles; say so instead of forcing a playbook.
 
 ## Principles
 
