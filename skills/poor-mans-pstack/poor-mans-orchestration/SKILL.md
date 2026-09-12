@@ -20,11 +20,15 @@ pstack's skills fan out multi-model panels (3+ agents on Opus-tier models per in
 
 | Role | Used by | Default model |
 |---|---|---|
-| explorer (bulk code reading) | how | `claude-haiku-4-5` |
-| investigator (evidence search per MCP) | why | `claude-haiku-4-5` |
+| explorer (bulk code reading) | how, maintain-verification-skill | `claude-sonnet-5` |
+| investigator (evidence search per MCP) | why | `claude-opus-4-8` |
 | runner (candidate sketch generation) | arena, architect | `claude-sonnet-5` |
-| reviewer (critique, adversarial review) | interrogate, how critique | `claude-sonnet-5` |
-| judgment (synthesis, picking, verdicts) | all | main session (omit `model`) |
+| reviewer (critique, adversarial review) | interrogate, how critique | `claude-opus-4-8` |
+| feature (delegated implementation) | Feature playbook | `claude-opus-4-8` |
+| refactoring (delegated implementation) | Refactoring playbook | `claude-opus-4-8` |
+| bug-fix (delegated implementation) | Bug fix playbook | `claude-opus-4-8` |
+
+The implementation tiers are playbook-specific, one per playbook that delegates code-writing, so you can tune them apart the way upstream pstack keeps a per-playbook model line. Implementation is judgment-heavy, so `feature`, `refactoring`, and `bug-fix` default to `claude-opus-4-8` rather than a cheap tier; a delegated implementer also keeps a large diff's reads and edits out of the main context (**principle-guard-the-context-window**). Tier one down only for a delegate doing purely mechanical edits (a scripted rename sweep, for example). Judgment (synthesis, picking, verdicts) has no tier and no configurable line: it stays in the main session per the Judge inline doctrine above.
 
 A role line in `~/.claude/poor-mans-pstack-models.md` overrides the default; the `setup-poor-mans-pstack` skill writes that sheet. A missing line keeps the default. A value of `inherit-parent` or `auto` means omit `model` on the `Agent` call. If a slug is rejected as unresolvable, pick the closest valid slug from the Agent tool's error message and continue; fix the sheet afterward, don't block.
 
