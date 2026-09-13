@@ -5,7 +5,7 @@ description: "Configure the model tiers the poor-mans-pstack skills use for suba
 
 # Setup poor-mans-pstack
 
-Write `~/.claude/poor-mans-pstack-models.md`, a per-role model override sheet you include from your global `CLAUDE.md`. The **poor-mans-orchestration** skill names each role's default inline; this override sheet adapts those defaults to the models you actually have access to. Unlike pstack's multi-model panels, every poor-mans role takes a single model and fan-out never exceeds two subagents, so there are no panel lists here.
+Write `~/.claude/poor-mans-pstack-models.md`, a per-role model override sheet you include from your global `CLAUDE.md`. The **poor-mans-orchestration** skill names each role's default inline; this override sheet adapts those defaults to the models you actually have access to. The role keys follow upstream pstack's granular per-skill convention (`how explorer`, `why investigators`, `arena runners`, `architect runners`, `interrogate reviewers`, and so on), so each skill reads its own line. A **panel** key (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) takes a comma-separated list of models and spawns one subagent per entry; every other key takes a single model. This is where cost is tuned: a shorter panel or a cheaper tier costs less per invocation.
 
 Claude Code has no auto-applied "rules" mechanism. Inclusion is explicit: the user adds a line to `~/.claude/CLAUDE.md` (or a project `CLAUDE.md`) such as:
 
@@ -27,7 +27,7 @@ The default role-to-model mapping is the shape in step 5. If `~/.claude/poor-man
 
 ### 3. Map and confirm
 
-Show every role with its current model, marking any real slug not in the detected set as needing a choice. Ask whether to accept as-is or change specific roles, offering the detected models plus `inherit-parent` and `auto` as the options. Prefer `AskUserQuestion` over free text. Say the tradeoff in one line each: a higher tier reasons better and drains the usage limit faster. Every poor-mans role is a single model, not a panel list.
+Show every role with its current model (a panel key shows its full list), marking any real slug not in the detected set as needing a choice. Ask whether to accept as-is or change specific roles, offering the detected models plus `inherit-parent` and `auto` as the options. For a panel key, let the user set the whole list, including its length: fewer entries means fewer subagents per invocation. Prefer `AskUserQuestion` over free text. Say the tradeoff in one line each: a higher tier or a longer panel reasons better and drains the usage limit faster.
 
 ### 4. Validate
 
@@ -40,12 +40,18 @@ Write `~/.claude/poor-mans-pstack-models.md` with the shape below. Overwrite the
 ```markdown
 # poor-mans-pstack model configuration
 
-Per-role model overrides for the poor-mans-pstack skills. The poor-mans-orchestration skill names each role's default; the values here override it. Delete a line to fall back to the default. A value of `inherit-parent` or `auto` runs that role on the parent session's model (the `Agent` call omits `model`). The explorer, investigator, runner, and reviewer roles serve the utility skills (how, why, arena, architect, interrogate); feature, refactoring, and bug-fix are the per-playbook implementation tiers. Judgment stays in the main session and has no line here.
+Per-role model overrides for the poor-mans-pstack skills. The poor-mans-orchestration skill names each role's default; the values here override it. Delete a line to fall back to the default. A panel key (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) is a comma-separated list, one subagent per entry; every other key is a single model. A value of `inherit-parent` or `auto` (a whole single-model line, or one panel entry) runs on the parent session's model (the `Agent` call omits `model`). The keys follow upstream pstack's per-skill convention: `how`, `why`, `arena`, `architect`, and `interrogate` name their own roles; `no-comments` and `maintain-verification-skill` name theirs; `feature`, `refactoring`, and `bug-fix` are the per-playbook implementation tiers. Interrogate's lead judgment stays in the main session, so it has no line.
 
-explorer: claude-sonnet-5
-investigator: claude-opus-4-8
-runner: claude-sonnet-5
-reviewer: claude-opus-4-8
+how explorer: claude-sonnet-5
+how explainer: claude-opus-4-8
+why investigators: claude-sonnet-5
+why synthesizer: claude-opus-4-8
+arena runners: claude-opus-4-8, claude-sonnet-5
+arena cross-judge pool: claude-opus-4-8, claude-sonnet-5
+architect runners: claude-fable-5-1, claude-opus-4-8
+interrogate reviewers: claude-opus-5, claude-opus-4-8
+no-comments reviewer: claude-sonnet-5
+maintain-verification readers: claude-sonnet-5
 feature: claude-opus-4-8
 refactoring: claude-opus-4-8
 bug-fix: claude-opus-4-8
@@ -61,7 +67,9 @@ Tell the user where the sheet was written and how it loads (via the `@` include 
 
 ## Models
 
-- Available Claude models: Opus 5 (`claude-opus-5`), Opus 4.8 (`claude-opus-4-8`), Fable 5 (`claude-fable-5`), Sonnet 5 (`claude-sonnet-5`), Haiku 4.5 (`claude-haiku-4-5`)
-- Utility-skill role defaults: explorer `claude-sonnet-5`, investigator `claude-opus-4-8`, runner `claude-sonnet-5`, reviewer `claude-opus-4-8`
+- Available Claude models: Opus 5 (`claude-opus-5`), Opus 4.8 (`claude-opus-4-8`), Fable 5.1 (`claude-fable-5-1`), Sonnet 5 (`claude-sonnet-5`), Haiku 4.5 (`claude-haiku-4-5-20251001`)
+- Single-model read/search roles default to the cheap tier: `how explorer`, `why investigators`, `no-comments reviewer`, and `maintain-verification readers` each `claude-sonnet-5`
+- Single-model drafting roles: `how explainer` and `why synthesizer` each `claude-opus-4-8`
+- Panel keys each default to a two-model list: `arena runners` and `arena cross-judge pool` each `claude-opus-4-8, claude-sonnet-5`; `architect runners` `claude-fable-5-1, claude-opus-4-8`; `interrogate reviewers` `claude-opus-5, claude-opus-4-8`. On one subscription these are distinct tiers, not distinct families, so the panel buys tier diversity, not model-family diversity
+- Interrogate's lead judgment and arena's Phase D pick have no line; they run in the main session
 - Per-playbook implementation tiers: feature, refactoring, and bug-fix each default to `claude-opus-4-8`, one line per playbook so you can tune them apart
-- Judgment (synthesis, picking, verdicts) has no configurable line: it stays in the main session per the poor-mans-orchestration Judge inline doctrine

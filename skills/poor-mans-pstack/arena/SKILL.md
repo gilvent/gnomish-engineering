@@ -1,41 +1,72 @@
 ---
 name: arena
-description: "Compete 2+ design sketches (not full implementations) at the same task, pick a base, graft the strongest parts of the losers into it. Budget port of pstack's arena for a single Claude subscription. Use for /arena, 'arena this', or when one attempt at a non-trivial artifact would lock in the wrong shape."
+description: "Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the losers into it. Use for /arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape."
 ---
 
-# Arena (sketch arena)
+# Arena
 
-Fan out competing attempts at the same task, pick the strongest as the base, graft the best ideas from the others into it, verify the synthesized result. The budget rule that makes this affordable: **candidates are sketches, not implementations.** A sketch package (caller usage, types, signatures, module map, rationale) costs 10-20x less than a full build and captures most of the decision value. Compete full implementations only when the user explicitly asks and accepts the cost.
+Fan out N parallel attempts at the same task. Read every candidate end to end. Pick the strongest as the base. Graft the best ideas from the others into it. Verify the synthesized result.
 
-Read the **poor-mans-orchestration** skill before spawning anything; it owns the model tiers and the budget rules.
+Read the **poor-mans-orchestration** skill ([../poor-mans-orchestration/SKILL.md](../poor-mans-orchestration/SKILL.md)) before spawning anything; it owns the model tiers and the delegation defaults.
+
+## Start
+
+Open a todolist with one entry per phase before launching anything.
+
+1. Frame
+2. Fan out
+3. Cross-judge
+4. Pick
+5. Graft
+6. Verify
 
 ## Phase A: Frame
 
-The candidates receive the same prompt, so the prompt is the contract.
+The N candidates will receive the same prompt, so the prompt is the contract.
 
-1. State the artifact each candidate is sketching.
-2. Derive the rubric: 3-6 concrete gradeable criteria for *this* task. Concrete: "Adds a --dry-run flag that skips writes". Vague: "code is correct". Candidates see the task, not the rubric.
-3. Pick the budget. Default: 2 candidates from one runner-tier subagent asked for two structurally distinct packages in one pass. Higher stakes: 2 parallel runner-tier subagents, one candidate each. Only on explicit request: 3+ runners or full implementations.
-4. Assign output paths. Each candidate writes to its own scratch location; shared write targets fail the **principle-separate-before-serializing-shared-state** test.
+1. State the artifact each candidate is producing.
+2. Derive the rubric. State what success looks like for *this* task, then turn it into 3-6 concrete gradeable criteria. The rubric is the picker's tool in Phase D. Candidates only see the task.
+3. Pick the runners. Use `arena runners` from `~/.claude/poor-mans-pstack-models.md` when present; otherwise use the default from the **poor-mans-orchestration** skill. Spawn more when the arena covers multiple design directions. Same model N times when the work is generation-bound rather than judgment-sensitive.
+4. Assign output paths. Each candidate writes to its own location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per [Separate Before Serializing Shared State](../principle-separate-before-serializing-shared-state/SKILL.md).
 
 ## Phase B: Fan out
 
-Spawn the runner(s) with the task, the grounding, the output path(s), and the candidate discipline from the architect skill's [`candidate-checklist.md`](../architect/references/candidate-checklist.md). The rationale is mandatory: each candidate names the alternatives it considered and rejected. Without it you cannot tell whether a candidate's structure is principled or accidental, which makes grafting unreliable.
+Spawn all N subagents in one message with `run_in_background: true`, each with the task, the path to the shared grounding, its own output path, and instructions to produce both the artifact and a short rationale.
 
-## Phase C: Judge and pick
+Each rationale names the alternatives the candidate considered and what it rejected.
 
-You are the judge; no separate judge agent at default budget. Read every candidate end to end, then score criterion by criterion against the rubric, not on holistic feel. Skimming surfaces only the candidate whose surface looks most familiar. Pick the base on which candidate a future maintainer can extend most easily without breaking invariants; prefer the cleaner boundary or smaller surface when tied (**principle-laziness-protocol**). Record the pick and the reason in a short synthesis note. State the reduced diversity plainly: same-family candidates, self-judged.
+If a candidate fails to produce output, proceed with N-1 and note the dropout in the synthesis record.
 
-## Phase D: Graft
+## Phase C: Cross-judge
 
-Walk each losing candidate once more and identify what is worth porting into the base; usually one or two things per candidate, not most of it. Fold each graft in by hand per **principle-redesign-from-first-principles**; the result must remain coherent under one mental model. Record what was grafted, from which candidate, and what was rejected and why. The rejection notes are the highest-signal part of the record.
+After all Phase B candidates complete, choose one model from the `arena cross-judge pool` in `~/.claude/poor-mans-pstack-models.md` when present; otherwise use the default from the **poor-mans-orchestration** skill. Prefer a different model family from the parent's. Spawn one readonly judge subagent on that model. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
 
-When candidates converge on the same shape, ship the consensus and note it; no graft needed. When they wildly diverge, Phase A was under-specified: reframe and re-run rather than averaging.
+## Phase D: Pick a base
 
-## Phase E: Verify
+Read every candidate end to end before picking.
 
-The synthesized artifact holds up under the same scrutiny as any other output, per **principle-prove-it-works**. The arena does not earn a pass. If verification surfaces a problem, either Phase A was wrong (reframe, re-run) or a losing candidate caught it and you missed the graft (back to Phase D).
+Score each candidate against the rubric criterion by criterion, not on holistic feel. Compare against the cross-judge. Agreement on the base confirms the pick. Disagreement means one of you is biased or the rubric was ambiguous. Read both rationales before deciding.
+
+Pick the base on which candidate a future maintainer can extend most easily without breaking invariants. Prefer the cleaner boundary or smaller API when two feel tied, per [Laziness Protocol](../principle-laziness-protocol/SKILL.md).
+
+Record the pick and the reason in a short synthesis note alongside the base artifact, including the cross-judge's verdict.
+
+## Phase E: Graft
+
+Walk each losing candidate once more and identify what is worth porting into the base. The signal is usually one or two things per candidate, not most of it.
+
+Fold each graft in by hand, per [Redesign From First Principles](../principle-redesign-from-first-principles/SKILL.md). Don't paste mechanically. The result has to remain coherent under one mental model.
+
+Record what was grafted, from which candidate, and what was rejected and why.
+
+When N candidates converge on the same shape, that is a strong agreement signal. Note the convergence in the record and ship the consensus shape. No graft is needed. When N candidates wildly diverge, Phase A was under-specified. Reframe and re-run rather than averaging the divergence.
+
+## Phase F: Verify
+
+The synthesized artifact has to hold up under the same scrutiny as any other output, per [Prove It Works](../principle-prove-it-works/SKILL.md).
+
+If verification surfaces a problem the arena did not catch, either Phase A was wrong (re-frame and re-run) or one candidate caught it and you missed the graft (go back to Phase E). Don't paper over.
 
 ## Outputs
 
-One synthesized artifact. One synthesis note naming the base, the grafts with source candidate, the rejections, and the verification result.
+One synthesized artifact. One short synthesis note alongside, naming the base, the grafts (with source candidate), the rejections, the dropouts if any, and the verification result.

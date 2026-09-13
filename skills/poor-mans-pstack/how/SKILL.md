@@ -1,33 +1,57 @@
 ---
 name: how
-description: "Use for 'how does X work', code walkthroughs before changing something, and placement / ownership / layering questions ('where should this live', 'is this the right layer'). Explains subsystem architecture, runtime flow, onboarding mental models. Can critique architecture. Budget port of pstack's how for a single Claude subscription. Use why for motivation."
+description: "Use for \"how does X work\", code walkthroughs before changing something, and placement / ownership / layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"). Explains subsystem architecture, runtime flow, onboarding mental models. Use why for motivation."
 ---
 
 # How
 
-Explore the codebase to answer "how does X work?" questions. Produce clear architectural explanations at the level of a senior engineer onboarding onto a subsystem: enough to build a working mental model, not annotated source code.
+Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Two modes: **Explain** (default) and **Critique** (when the user asks for issues, problems, or improvements, not just understanding). Read the **poor-mans-orchestration** skill before spawning anything.
+Read the **poor-mans-orchestration** skill ([../poor-mans-orchestration/SKILL.md](../poor-mans-orchestration/SKILL.md)) before spawning anything; it owns the model tiers and the delegation defaults.
 
-## Explain mode
+## Step 1. Assess Complexity
 
-1. **Parse the question and assess complexity.** Identify the scope; if ambiguous, state your best-guess interpretation before exploring rather than asking. Simple (a single module, a narrow "how does function X work"): explore and explain yourself, inline, no subagents. Complex (a subsystem spanning many files, a cross-cutting feature, a full overview): spawn **one explorer-tier subagent** (readonly) to do the bulk reading so the raw code stays out of your context (**principle-guard-the-context-window**). When in doubt, lean simple.
-2. **Explore.** Whoever explores (you or the explorer) starts broad (glob directories, grep key types), follows the thread from an entry point through the call chain, reads the actual code rather than guessing from file names, and stops only when it can describe the full path from input to output without hand-waving any step. Note things that are surprising or that a newcomer would get wrong. The explorer returns structured findings: components, flow traced, files read, non-obvious notes.
-3. **Explain.** Write the explanation yourself from the findings, in the output format below.
+If the scope is ambiguous, state your interpretation and explore. The user can redirect.
 
-### Output format
+- **Simple** (a single module, a small utility, a narrow question such as "how does function X work"): no explorers. One explainer explores and explains in a single pass. Go to Step 2b.
+- **Complex** (a subsystem spanning multiple files or services, a cross-cutting feature, a full architectural overview): spawn parallel explorers first, then hand off to the explainer. Go to Step 2a.
 
-Adapt to the question; not every section is needed.
+When in doubt, take the simple path.
 
-- **Overview.** 1-2 paragraphs: what it is, what it does, why it exists.
-- **Key Concepts.** The important types, services, or abstractions, briefly defined.
-- **How It Works.** The core: what triggers it, what happens step by step, where data goes, the decision points. Prose with file and function references, not code dumps.
-- **Where Things Live.** A brief map of the relevant files, just enough to start working in the area.
-- **Gotchas.** Non-obvious or surprising things, historical context, known sharp edges.
+## Step 2a. Explore (complex questions only)
 
-## Critique mode
+Decompose the question into 2 to 4 exploration angles, each a distinct slice of the subsystem. Spawn all explorers in a single message:
 
-1. Run the full explain flow first; you must understand the architecture before critiquing it.
-2. Spawn **one reviewer-tier critic subagent** (readonly) with the explanation, the relevant file paths, and instructions to independently identify architectural issues: shallow modules, information leakage, temporal decomposition, pass-through layers, mismatched data structures, boundary violations. While it runs, do your own independent critique pass before reading its findings, to limit anchoring.
-3. **Lead judgment.** Merge both critiques as a pragmatic lead, not an aggregator. Categorize every finding: **Act on** (worth fixing now), **Consider** (real but unclear cost/benefit), **Noted** (valid, low priority), **Dismissed** (wrong, missing context, or style preference, with a one-line why). Findings both passes raised independently are the highest signal. Note the reduced diversity (two same-family passes, not a three-model panel).
-4. Present the explanation first, the critique verdict below it; the explanation must stand on its own.
+- `subagent_type`: `"general-purpose"`
+- `model`: your configured `how explorer` tier (**poor-mans-orchestration** skill; set tiers with `/setup-poor-mans-pstack`)
+- `readonly`: `true`
+
+Each explorer gets the prompt in `references/explorer-prompt.md` with its angle filled in. Then go to Step 3.
+
+## Step 2b. Direct Explain (simple questions)
+
+Spawn one `Agent` subagent that explores and explains in one pass:
+
+- `subagent_type`: `"general-purpose"`
+- `model`: your configured `how explainer` tier (**poor-mans-orchestration** skill)
+- `readonly`: `true`
+
+Build its prompt from `references/explainer-prompt.md` without the explorer-findings section. Go to Step 4.
+
+## Step 3. Synthesize (complex questions only)
+
+Once all explorers have returned, spawn one `Agent` subagent to synthesize their findings into one explanation:
+
+- `subagent_type`: `"general-purpose"`
+- `model`: your configured `how explainer` tier (**poor-mans-orchestration** skill)
+- `readonly`: `true`
+
+Build its prompt from `references/explainer-prompt.md` with every explorer's findings filled in.
+
+## Step 4. Present
+
+Present the explainer's output to the user. Light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.
+
+## Output Format
+
+The explanation uses the sections defined in `references/explainer-prompt.md`, dropping any that do not apply: Overview, Key Concepts, How It Works, Where Things Live, Gotchas.
