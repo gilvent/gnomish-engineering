@@ -59,18 +59,18 @@ Write `~/.claude/poor-mans-pstack-models.md` with the shape below. Overwrite the
 Per-role agents for the poor-mans-pstack skills. The poor-mans-orchestration skill names each role's default; the values here override it. Delete a line to fall back to the default. Each value names a `pstack-<model>-<effort>[-ro]` agent definition that `/setup-poor-mans-pstack` generates; a skill spawns it with `subagent_type` set to that name and no `model`. A panel key (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) is a comma-separated list, one subagent per entry; every other key is a single agent. A value of `inherit-parent` or `auto` (a whole single-agent line, or one panel entry) spawns `general-purpose` with no `model`, on the parent session's model. The keys follow upstream pstack's per-skill convention: `how`, `why`, `arena`, `architect`, and `interrogate` name their own roles; `no-comments` and `maintain-verification-skill` name theirs; `feature`, `refactoring`, and `bug-fix` are the per-playbook implementation tiers. Interrogate's lead judgment stays in the main session, so it has no line. Edit this file by re-running `/setup-poor-mans-pstack`, which regenerates the agents to match.
 
 how explorer: pstack-sonnet-5-high
-how explainer: pstack-opus-4-8-high
+how explainer: pstack-opus-5-5-high
 why investigators: pstack-sonnet-5-high
-why synthesizer: pstack-opus-4-8-high
-arena runners: pstack-opus-4-8-high, pstack-sonnet-5-high, pstack-opus-5-high
-arena cross-judge pool: pstack-opus-4-8-high, pstack-opus-5-high
-architect runners: pstack-fable-5-1-high, pstack-opus-4-8-high
-interrogate reviewers: pstack-opus-5-high, pstack-opus-4-8-high
+why synthesizer: pstack-opus-5-5-high
+arena runners: pstack-sonnet-5-high, pstack-fable-5-1-high, pstack-opus-5-5-high
+arena cross-judge pool: pstack-sonnet-5-high, pstack-opus-5-5-high
+architect runners: pstack-fable-5-1-high, pstack-opus-5-5-high
+interrogate reviewers: pstack-opus-5-5-high, pstack-sonnet-5-high
 no-comments reviewer: pstack-sonnet-5-high
 maintain-verification readers: pstack-sonnet-5-high
-feature: pstack-opus-4-8-high
-refactoring: pstack-opus-4-8-high
-bug-fix: pstack-opus-4-8-high
+feature: pstack-opus-5-5-medium
+refactoring: pstack-opus-5-5-medium
+bug-fix: pstack-opus-5-5-medium
 ```
 
 ### 6. Generate the agents
@@ -102,11 +102,11 @@ Tell the user where the sheet and the agents were written, that the sheet loads 
 
 ## Models
 
-- Available Claude models: Opus 5 (`claude-opus-5`), Opus 4.8 (`claude-opus-4-8`), Fable 5.1 (`claude-fable-5-1`), Sonnet 5 (`claude-sonnet-5`), Haiku 4.5 (`claude-haiku-4-5-20251001`)
-- Effort levels: `low`, `medium`, `high`, `xhigh`, `max`. Every default runs at `high`
+- Available Claude models: Opus 5.5 (`claude-opus-5-5`), Opus 5 (`claude-opus-5`), Opus 4.8 (`claude-opus-4-8`), Fable 5.1 (`claude-fable-5-1`), Sonnet 5 (`claude-sonnet-5`), Haiku 4.5 (`claude-haiku-4-5-20251001`)
+- Effort levels: `low`, `medium`, `high`, `xhigh`, `max`. Every default runs at `high` except the implementation tiers, which run at `medium`
 - Single-agent read/search roles default to the cheap model: `how explorer`, `why investigators`, `no-comments reviewer`, and `maintain-verification readers` each `pstack-sonnet-5-high`
-- Single-agent drafting roles: `how explainer` and `why synthesizer` each `pstack-opus-4-8-high`
-- Panel defaults: `arena runners` is `pstack-opus-4-8-high, pstack-sonnet-5-high, pstack-opus-5-high`; `arena cross-judge pool` is `pstack-opus-4-8-high, pstack-opus-5-high`; `architect runners` is `pstack-fable-5-1-high, pstack-opus-4-8-high`; `interrogate reviewers` is `pstack-opus-5-high, pstack-opus-4-8-high`. On one subscription these are distinct tiers, not distinct families, so a panel buys tier diversity, not model-family diversity
+- Single-agent drafting roles: `how explainer` and `why synthesizer` each `pstack-opus-5-5-high`
+- Panel defaults: `arena runners` is `pstack-sonnet-5-high, pstack-fable-5-1-high, pstack-opus-5-5-high`; `arena cross-judge pool` is `pstack-sonnet-5-high, pstack-opus-5-5-high`; `architect runners` is `pstack-fable-5-1-high, pstack-opus-5-5-high`; `interrogate reviewers` is `pstack-opus-5-5-high, pstack-sonnet-5-high`. On one subscription these are distinct tiers, not distinct families, so a panel buys tier diversity, not model-family diversity
 - Interrogate's lead judgment and arena's Phase D pick have no line; they run in the main session
-- Per-playbook implementation tiers: feature, refactoring, and bug-fix each default to `pstack-opus-4-8-high`, one line per playbook so you can tune them apart
+- Per-playbook implementation tiers: feature, refactoring, and bug-fix each default to `pstack-opus-5-5-medium`, one line per playbook so you can tune them apart
 - No default is read-only; `-ro` appears only where the user asked for it
