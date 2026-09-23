@@ -75,9 +75,8 @@ The other pstack categories (real-time team chat, infrastructure observability, 
 Launch all matching investigators in a single message so they run concurrently. Don't ask one agent to cover multiple MCPs.
 
 Subagent config (each):
-- `subagent_type`: `"general-purpose"`
-- `model`: your configured `why investigators` tier (**poor-mans-orchestration** skill; set tiers with `/setup-poor-mans-pstack`)
-- `readonly`: `false` (agent mode). **Do not use readonly mode.** It strips MCP access, which disables MCP-backed investigators entirely. Investigators still shouldn't write anything.
+- `subagent_type`: your configured `why investigators` agent (**poor-mans-orchestration** skill; set agents with `/setup-poor-mans-pstack`)
+- Investigators need their MCP tools and shouldn't write anything.
 
 Each investigator gets:
 1. The base prompt from `references/investigator-prompt.md`
@@ -110,9 +109,8 @@ If your scope assessment suggests a single-commit trivial target where the PR de
 
 Spawn one synthesizer subagent:
 
-- `subagent_type`: `"general-purpose"`
-- `model`: your configured `why synthesizer` tier (**poor-mans-orchestration** skill)
-- `readonly`: `false` (agent mode). The synthesizer's quality check spot-verifies citations, which can require MCP access. Readonly mode strips MCPs and defeats that.
+- `subagent_type`: your configured `why synthesizer` agent (**poor-mans-orchestration** skill)
+- The synthesizer's quality check spot-verifies citations, which can require MCP access.
 
 The synthesizer gets:
 1. The investigator findings, including any null results and any categories skipped with justification

@@ -7,7 +7,7 @@ description: "Strip comments before review with an independent reviewer pass, fi
 
 An independent reviewer pass flags comments for deletion; you inspect its report, act on the accepted findings, and offer to encode any real constraint the comments claimed. The reviewer's value is a fresh perspective that did not write the code, so defer to it and let it judge without your reasoning ([poor-mans-orchestration](../poor-mans-orchestration/SKILL.md), inline-first doctrine reason two: an independent second pass whose value depends on not sharing your reasoning).
 
-Read the **poor-mans-orchestration** skill before spawning; it owns the tiers (this reviewer runs at the `no-comments reviewer` tier, default `claude-sonnet-5`) and the delegation defaults (`run_in_background: true`, `readonly: true`, file pointers).
+Read the **poor-mans-orchestration** skill before spawning; it owns the agents (this reviewer spawns as the `no-comments reviewer` agent, default `pstack-sonnet-5-high`) and the delegation defaults (`run_in_background: true`, file pointers).
 
 ## Scope
 

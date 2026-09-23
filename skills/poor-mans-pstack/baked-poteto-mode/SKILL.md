@@ -36,7 +36,7 @@ Read the **poor-mans-orchestration** skill ([../poor-mans-orchestration/SKILL.md
 - **No swarms.** The coverage-matrix, race, and gauntlet patterns pstack runs through its swarm skill are out of budget. If a task seems to need one, narrow the scope or hand the breadth back to the user.
 - **Pause and warn before any potentially long loop.** Before a stubborn-hunt loop, an autonomous run, or any repeated unattended pass that can drain the usage limit, tell the user the expected cost and get a go-ahead. A session override ("don't stop", "run until done") is that go-ahead.
 
-Defaults for every `Agent` call follow poor-mans-orchestration: `run_in_background: true`, file pointers instead of inlined content, `readonly: true` for exploration and review roles, and the tier configured with `/setup-poor-mans-pstack`. You own every subagent's work: read its actual output artifact, not its summary ([Prove It Works](../principle-prove-it-works/SKILL.md)), and write your own synthesis. Stop an abandoned agent and confirm it stopped before you commit or merge from a tree it may still hold.
+Defaults for every `Agent` call follow poor-mans-orchestration: `run_in_background: true`, file pointers instead of inlined content, and the role's agent configured with `/setup-poor-mans-pstack` as the `subagent_type`. You own every subagent's work: read its actual output artifact, not its summary ([Prove It Works](../principle-prove-it-works/SKILL.md)), and write your own synthesis. Stop an abandoned agent and confirm it stopped before you commit or merge from a tree it may still hold.
 
 ## Writing the reply
 
