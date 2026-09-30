@@ -1,6 +1,6 @@
 ---
 name: baked-poteto-mode
-description: Entry point of poor-mans-pstack, the budget port of pstack's poteto-mode. Five implementation playbooks (investigation, bug fix, feature, refactoring, prototype) grounded in 23 principle skills, routed to single-subscription utility skills (how, why, architect, arena, interrogate, unslop). Use for /baked-poteto-mode or requests to code in this style.
+description: Entry point of poor-mans-pstack, the budget port of pstack's poteto-mode. Five implementation playbooks (investigation, bug fix, feature, refactoring, prototype), plus multi-phase planning and autopilot-stack delivery, grounded in 23 principle skills, routed to single-subscription utility skills (how, why, architect, arena, interrogate, unslop). Use for /baked-poteto-mode or requests to code in this style.
 ---
 
 # Baked poteto mode
@@ -62,6 +62,8 @@ Comments follow the same rule as the reply. Write them clean as you go. Keep a c
 - **Feature** ([playbooks/feature.md](playbooks/feature.md)). New or changed behavior, built from a named data shape.
 - **Refactoring** ([playbooks/refactoring.md](playbooks/refactoring.md)). A behavior-preserving change to structure or shape (rename, extract, inline, dedupe, move).
 - **Prototype** ([playbooks/prototype.md](playbooks/prototype.md)). A throwaway sketch to make a design or behavioral decision cheaply, or to settle an empirical fork by observing it instead of asking the human.
+- **Multi-phase or multi-PR plan** ([playbooks/multi-phase-plan.md](playbooks/multi-phase-plan.md)). Work that spans phases or stacked PRs. Produces a local checklist plan, checked by `scripts/check-plan.mjs`, not code. Also `/multi-phase-plan`.
+- **Autopilot-stack** ([playbooks/autopilot-stack.md](playbooks/autopilot-stack.md)). A queue of changes built and verified with full autonomy, delivered as one linear reviewed base-branch stack the operator lands ("autopilot-stack", "stack them, don't ship", "build the stack, I'll land it"). The execution playbook a multi-phase plan names.
 - **Opening a PR** ([playbooks/opening-a-pr.md](playbooks/opening-a-pr.md)). Invoked at the end of Bug fix, Feature, and Refactoring. Worktree, commit, and PR discipline, routed to the **deslop**, **no-comments**, **technical-writing**, and **unslop** skills.
 
 A task none of these fit gets a bespoke plan built from the principles; say so instead of forcing a playbook.
