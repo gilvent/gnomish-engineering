@@ -16,21 +16,21 @@ Each value names a `pstack-<model>-<effort>[-ro]` agent definition that `setup-p
 
 | Role key | Shape | Used by | Default |
 |---|---|---|---|
-| `how explorer` | single | how, Step 2a explore | `pstack-sonnet-5-high` |
+| `how explorer` | single | how, Step 2a explore | `pstack-sonnet-5-5-high` |
 | `how explainer` | single | how, Step 2b / Step 3 synthesize | `pstack-opus-5-5-high` |
-| `why investigators` | single | why, Step 3 (source control + issue tracker, plus docs when present) | `pstack-sonnet-5-high` |
+| `why investigators` | single | why, Step 3 (source control + issue tracker, plus docs when present) | `pstack-sonnet-5-5-high` |
 | `why synthesizer` | single | why, Step 4 | `pstack-opus-5-5-high` |
-| `arena runners` | panel | arena, Phase B | `pstack-sonnet-5-high, pstack-fable-5-1-high, pstack-opus-5-5-high` |
-| `arena cross-judge pool` | panel (pick one) | arena, Phase C | `pstack-sonnet-5-high, pstack-opus-5-5-high` |
+| `arena runners` | panel | arena, Phase B | `pstack-sonnet-5-5-high, pstack-fable-5-1-high, pstack-opus-5-5-high` |
+| `arena cross-judge pool` | panel (pick one) | arena, Phase C | `pstack-sonnet-5-5-high, pstack-opus-5-5-high` |
 | `architect runners` | panel | architect, Phase B via arena | `pstack-fable-5-1-high, pstack-opus-5-5-high` |
-| `interrogate reviewers` | panel | interrogate, Step 3 | `pstack-opus-5-5-high, pstack-sonnet-5-high` |
-| `no-comments reviewer` | single | no-comments | `pstack-sonnet-5-high` |
-| `maintain-verification readers` | single | maintain-verification-skill | `pstack-sonnet-5-high` |
+| `interrogate reviewers` | panel | interrogate, Step 3 | `pstack-opus-5-5-high, pstack-sonnet-5-5-high` |
+| `no-comments reviewer` | single | no-comments | `pstack-sonnet-5-5-medium` |
+| `maintain-verification readers` | single | maintain-verification-skill | `pstack-sonnet-5-5-high` |
 | `feature` | single | Feature playbook | `pstack-opus-5-5-medium` |
 | `refactoring` | single | Refactoring playbook | `pstack-opus-5-5-medium` |
 | `bug-fix` | single | Bug fix playbook | `pstack-opus-5-5-medium` |
 
-Read-bound and search-bound roles do not need frontier reasoning, so `how explorer`, `why investigators`, `no-comments reviewer`, and `maintain-verification readers` default to the cheap `pstack-sonnet-5-high`. Drafting and judgment roles (`how explainer`, `why synthesizer`) default to `pstack-opus-5-5-high`. Every default runs at `high` effort except the implementation tiers.
+Read-bound and search-bound roles do not need frontier reasoning, so `how explorer`, `why investigators`, and `maintain-verification readers` default to the cheap `pstack-sonnet-5-5-high`, and `no-comments reviewer` to `pstack-sonnet-5-5-medium`. Drafting and judgment roles (`how explainer`, `why synthesizer`) default to `pstack-opus-5-5-high`. Every default runs at `high` effort except `no-comments reviewer` and the implementation tiers, which run at `medium`.
 
 The panel keys (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) default to the lists in the table above: three runners for `arena runners`, two entries for the others. On a single subscription the entries are distinct Claude tiers, not distinct model families, so the panel buys tier diversity, not the independent-model diversity upstream's panels assume; at two entries that diversity is thinner still, and `arena cross-judge pool` draws both its entries from the `arena runners` models, so the judge that scores the candidates is one of the tiers that wrote them. State that reduced diversity plainly in any synthesized verdict. `arena cross-judge pool` is a panel the skill picks one entry from; the others spawn one subagent per entry.
 
