@@ -7,7 +7,7 @@ description: "Spawn N parallel candidates at the same task, pick a base, graft t
 
 Fan out N parallel attempts at the same task. Read every candidate end to end. Pick the strongest as the base. Graft the best ideas from the others into it. Verify the synthesized result.
 
-Read the **poor-mans-orchestration** skill ([../poor-mans-orchestration/SKILL.md](../poor-mans-orchestration/SKILL.md)) before spawning anything; it owns the model tiers and the delegation defaults.
+Each role below reads its line in `~/.claude/poor-mans-pstack-models.md`, which `/setup-poor-mans-pstack` writes. Pass the line's agent name as `subagent_type` and never pass `model`. An `inherit-parent` or `auto` value means `general-purpose` with no `model`. If the sheet or the line is missing, use the default named here. If this session lacks a named agent, spawn `general-purpose` with the nearest `model` alias and say so.
 
 ## Start
 
@@ -26,7 +26,7 @@ The N candidates will receive the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric. State what success looks like for *this* task, then turn it into 3-6 concrete gradeable criteria. The rubric is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners. Use `arena runners` from `~/.claude/poor-mans-pstack-models.md` when present; otherwise use the default from the **poor-mans-orchestration** skill. Spawn more when the arena covers multiple design directions. Same agent N times when the work is generation-bound rather than judgment-sensitive.
+3. Pick the runners. Use `arena runners` from `~/.claude/poor-mans-pstack-models.md` when present; otherwise default to one each on `pstack-sonnet-5-high`, `pstack-fable-5-1-high`, `pstack-opus-5-5-high`. Spawn more when the arena covers multiple design directions. Same agent N times when the work is generation-bound rather than judgment-sensitive.
 4. Assign output paths. Each candidate writes to its own location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per [Separate Before Serializing Shared State](../principle-separate-before-serializing-shared-state/SKILL.md).
 
 ## Phase B: Fan out
@@ -39,7 +39,7 @@ If a candidate fails to produce output, proceed with N-1 and note the dropout in
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, choose one agent from the `arena cross-judge pool` in `~/.claude/poor-mans-pstack-models.md` when present; otherwise use the default from the **poor-mans-orchestration** skill. Prefer a different model family from the parent's. Spawn one judge subagent with that agent as its `subagent_type`; the judge only reads and scores. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
+After all Phase B candidates complete, choose one agent from the `arena cross-judge pool` in `~/.claude/poor-mans-pstack-models.md` when present; otherwise choose from `pstack-sonnet-5-high`, `pstack-opus-5-5-high`. Prefer a different model family from the parent's. Spawn one judge subagent with that agent as its `subagent_type`; the judge only reads and scores. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
 
 ## Phase D: Pick a base
 

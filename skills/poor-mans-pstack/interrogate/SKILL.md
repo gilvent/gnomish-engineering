@@ -9,7 +9,7 @@ Spawn one reviewer per configured model to adversarially review code changes. Ea
 
 The deliverable is a synthesized verdict. Do NOT auto-apply changes.
 
-Read the **poor-mans-orchestration** skill ([../poor-mans-orchestration/SKILL.md](../poor-mans-orchestration/SKILL.md)) before spawning anything; it owns the model tiers and the delegation defaults.
+Each role below reads its line in `~/.claude/poor-mans-pstack-models.md`, which `/setup-poor-mans-pstack` writes. Pass the line's agent name as `subagent_type` and never pass `model`. An `inherit-parent` or `auto` value means `general-purpose` with no `model`. If the sheet or the line is missing, use the default named here. If this session lacks a named agent, spawn `general-purpose` with the nearest `model` alias and say so.
 
 ## Step 1, Determine Scope
 
@@ -34,12 +34,12 @@ Write one clear paragraph. If you're unsure about the intent, ask the user befor
 
 ## Step 3, Spawn Reviewers
 
-Launch all reviewers in a single message using the `Agent` tool. Use the `interrogate reviewers` list from `~/.claude/poor-mans-pstack-models.md` when present, one reviewer per entry, extending or shrinking the Reviewer A/B/C/D labels below to the configured entry count. Otherwise use the default from the **poor-mans-orchestration** skill.
+Launch all reviewers in a single message using the `Agent` tool. Use the `interrogate reviewers` list from `~/.claude/poor-mans-pstack-models.md` when present, one reviewer per entry, extending or shrinking the Reviewer A/B/C/D labels below to the configured entry count. Otherwise use the default, `pstack-opus-5-5-high, pstack-sonnet-5-high`.
 
 For each reviewer:
-- `subagent_type`: the configured `interrogate reviewers` entry, or the poor-mans-orchestration default with no configured line
+- `subagent_type`: the configured `interrogate reviewers` entry, or the default with no configured line
 
-If an entry names an agent type this session does not have, follow the fallback in the **poor-mans-orchestration** skill. Do not block the review on it. If the entry is `inherit-parent` or `auto`, spawn `general-purpose` with no `model`; never treat those as missing agents.
+If an entry names an agent type this session does not have, spawn `general-purpose` with the nearest `model` alias for that reviewer and say so. Do not block the review on it. If the entry is `inherit-parent` or `auto`, spawn `general-purpose` with no `model`; never treat those as missing agents.
 
 Read `references/reviewer-prompt.md` and fill in the template with:
 1. The stated intent

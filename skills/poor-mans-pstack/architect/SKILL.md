@@ -7,7 +7,7 @@ description: "Sketch types, signatures, and module structure before code, then s
 
 Design before implementing. Sketch types, function signatures, class shapes, and module boundaries with `not implemented` bodies and pseudocode. Synthesize across multiple model perspectives, then fill in code against the chosen sketch. If implementation proves the sketch wrong, throw it out and redesign.
 
-Read the **poor-mans-orchestration** skill ([../poor-mans-orchestration/SKILL.md](../poor-mans-orchestration/SKILL.md)) before spawning anything; it owns the model tiers and the delegation defaults.
+Each role below reads its line in `~/.claude/poor-mans-pstack-models.md`, which `/setup-poor-mans-pstack` writes. Pass the line's agent name as `subagent_type` and never pass `model`. An `inherit-parent` or `auto` value means `general-purpose` with no `model`. If the sheet or the line is missing, use the default named here. If this session lacks a named agent, spawn `general-purpose` with the nearest `model` alias and say so.
 
 ## Start
 
@@ -31,7 +31,7 @@ Skip Phase A only when the work is genuinely greenfield with no surrounding syst
 
 Run the **arena** skill with the design-sketch task and the Phase A grounding artifacts. Pass `references/runner-prompt.md` as each runner's prompt. Each candidate produces a design package shaped per `references/rationale-template.md`.
 
-Use your configured `architect runners` (from `~/.claude/poor-mans-pstack-models.md`, defaults in the **poor-mans-orchestration** skill).
+Use your configured `architect runners` (from `~/.claude/poor-mans-pstack-models.md`, default `pstack-fable-5-1-high, pstack-opus-5-5-high`).
 
 Design it twice. Require at least two structurally distinct candidates before synthesis, even when the first looks sufficient. This is [Exhaust the Design Space](../principle-exhaust-the-design-space/SKILL.md) made concrete. Whole-shape alternatives, not point fixes inside one shape.
 

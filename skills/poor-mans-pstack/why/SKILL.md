@@ -9,7 +9,7 @@ Investigate the motivation and intent behind code.
 
 Companion to the `how` skill. `how` answers what the code does and how it works. `why` answers what forces led to its shape.
 
-Read the **poor-mans-orchestration** skill ([../poor-mans-orchestration/SKILL.md](../poor-mans-orchestration/SKILL.md)) before spawning anything; it owns the model tiers and the delegation defaults.
+Each role below reads its line in `~/.claude/poor-mans-pstack-models.md`, which `/setup-poor-mans-pstack` writes. Pass the line's agent name as `subagent_type` and never pass `model`. An `inherit-parent` or `auto` value means `general-purpose` with no `model`. If the sheet or the line is missing, use the default named here. If this session lacks a named agent, spawn `general-purpose` with the nearest `model` alias and say so.
 
 ## Operating Posture
 
@@ -75,7 +75,7 @@ The other pstack categories (real-time team chat, infrastructure observability, 
 Launch all matching investigators in a single message so they run concurrently. Don't ask one agent to cover multiple MCPs.
 
 Subagent config (each):
-- `subagent_type`: your configured `why investigators` agent (**poor-mans-orchestration** skill; set agents with `/setup-poor-mans-pstack`)
+- `subagent_type`: the `why investigators` line, default `pstack-sonnet-5-high`
 - Investigators need their MCP tools and shouldn't write anything.
 
 Each investigator gets:
@@ -109,7 +109,7 @@ If your scope assessment suggests a single-commit trivial target where the PR de
 
 Spawn one synthesizer subagent:
 
-- `subagent_type`: your configured `why synthesizer` agent (**poor-mans-orchestration** skill)
+- `subagent_type`: the `why synthesizer` line, default `pstack-opus-5-5-high`
 - The synthesizer's quality check spot-verifies citations, which can require MCP access.
 
 The synthesizer gets:
