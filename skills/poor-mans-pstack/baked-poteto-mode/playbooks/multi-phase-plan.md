@@ -5,7 +5,7 @@
 1. When the change is one or two files with an obvious approach, skip the plan. Say so and stop.
 2. Settle open questions by prototype before you write. Run **Prototype** ([prototype.md](prototype.md)) for each. Keep the branch, the SHA, and the captures for Appendix A. Ask the operator only about a product or preference call that no run can settle. Give options ([Never Block on the Human](../../principle-never-block-on-the-human/SKILL.md)).
 3. Explore in subagents spawned as the `how explorer` line (default `pstack-sonnet-5-high`), at most two at once ([Guard the Context Window](../../principle-guard-the-context-window/SKILL.md)). Each returns file pointers, conventions, test commands, and entry points. No inlined dumps.
-4. Copy the skeleton below into the plan file and fill every placeholder. Unless the operator names a path, write the file locally beside the prototype artifacts it cites. The plan is never published as an issue and never committed. Keep every heading and every sub-block in the order shown. One section per PR. One PR is one change with its own evidence ([Sequence Work into Verifiable Units](../../principle-sequence-verifiable-units/SKILL.md)). Name the execution playbook in **How to read this**. The execution playbook is **Autopilot-stack** ([autopilot-stack.md](autopilot-stack.md)).
+4. Copy the skeleton below into the plan file and fill every placeholder. Unless the operator names a path, write the file under the agent store's `docs/` (the **Agent store** section of the entry skill). Fill `<store>` with this repository's absolute store path. The plan is never published as an issue and never committed. Keep every heading and every sub-block in the order shown. One section per PR. One PR is one change with its own evidence ([Sequence Work into Verifiable Units](../../principle-sequence-verifiable-units/SKILL.md)). Name the execution playbook in **How to read this**. The execution playbook is **Autopilot-stack** ([autopilot-stack.md](autopilot-stack.md)).
 5. Write under the **technical-writing** skill in full, then the **unslop** skill. The body is one Diátaxis mode, how-to. Appendices hold explanation and reference. Each heading states the task or the finding. No long dashes. No mid-sentence colons.
 6. Run `node <baked-poteto-mode>/scripts/check-plan.mjs <plan.md>`, where `<baked-poteto-mode>` is this skill's installed directory, and fix every line it prints ([Encode Lessons in Structure](../../principle-encode-lessons-in-structure/SKILL.md)).
 7. Hand back. Post the plan path and the script's output, then stop. Execution starts on the operator's explicit go, under the execution playbook the plan names.
@@ -69,7 +69,7 @@ Each live lane runs in the owner's environment at the PR head, one lane at a tim
 - [ ] `git fetch origin <head-branch> && git checkout <head SHA>`.
 - [ ] <Start the backend and the surface. Wait for ready.>
 - [ ] <Deliver input only through the surface driver. Name the read-only diagnostics.>
-- [ ] Save every capture to `<evidence dir>/<pr-id>/lane-<n>/<slug>` and return the paths with the report.
+- [ ] Save every capture to `<store>/evidence/<pr-id>/lane-<n>/<slug>` and return the paths with the report.
 
 ## <Task as a verb phrase> (<PR id>)
 
@@ -108,7 +108,7 @@ Each live lane runs in the owner's environment at the PR head, one lane at a tim
 
 **Review gate.** The operator reviews before merge.
 
-- [ ] Copy lane <n> captures into `<review path>/<pr-id>-review-<slug>`.
+- [ ] Copy lane <n> captures into `<store>/review/<pr-id>-review-<slug>`.
 - [ ] Post the captures in chat. Stop at STACK-READY. Wait for the operator's review.
 
 **Merge.**

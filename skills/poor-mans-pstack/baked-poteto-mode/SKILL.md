@@ -13,6 +13,8 @@ The entry point of poor-mans-pstack, an implementation-focused port of the pstac
 - On any multi-step coding task, scan the principles index and read in full (the sibling `principle-<name>` skills) every principle whose trigger matches the task.
 - Before writing any logic, name the data shape and its organizing structure per Model the Domain.
 - Route to the utility skills: nontrivial change or "are we sure?" fork, the **how** skill; motivation and rationale questions, the **why** skill; code crossing a function boundary, the **architect** skill; multiple valid implementation shapes, the **arena** skill; contested design before shipping, the **interrogate** skill; every prose surface, your reply included, the **unslop** skill.
+- Long, autonomous, or multi-phase work, or any task the user steps away from to review later ("going to bed", "trust it when i'm back", "/loop until X") keeps a decision trail via the **show-me-your-work** skill. Commit it when stakes need an auditable record. Keep it local otherwise.
+- Before writing any file a run keeps outside the repository, read **Agent store** below.
 - Before any subagent or model choice, read **Subagents** below; configure agents with `/setup-poor-mans-pstack`.
 - Before declaring done, verify per Prove It Works.
 - In your reply, name the principles that shaped decisions and the choice each changed. A sentence per principle carries both. A citation must trace to a real choice the principle's rule drove; a citation with no decision behind it means you skipped its file.
@@ -40,6 +42,21 @@ You own every subagent's work. Review the diff and read its actual output artifa
 **Fresh subagents by default.** Give new work to a fresh subagent with consolidated scope, meaning the original brief, every later directive, and the prior agent's report and branch. This holds for a fix round, a follow-up, a retry, and the next queue item. Resume, message, or queue a follow-up on an existing subagent only when the new work strictly needs state that lives in that agent and is costly to move: its local checkout, its uncommitted changes, or a process it still runs, such as a dev server, a simulator, or a babysit watcher. A stop or hold order to a running agent is not reuse. A role such as a PR owner outlives its agent. Once that agent returns, a fresh agent takes the role's next round. Interrupt-chained resumes silently drop directives, so fire a fresh subagent with consolidated scope rather than trusting a "done" summary.
 
 **Budget.** A subagent runs at most two subagents of its own at once. A panel or fan-out with more entries runs in waves of two. The cap binds every subagent at every depth and does not bind the main session. Every generated agent's body repeats it.
+
+## Agent store
+
+`~/.poteto-furnace/` is the agent store. Every file a run keeps outside the repository goes there: plans, lane captures, review captures, and candidate output. Never write them under `/tmp` or any other machine path. Each repository has its own directory in the store, named after the main checkout, so every worktree of one repository shares it.
+
+```bash
+store="$HOME/.poteto-furnace/$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")"
+```
+
+Outside a git repository, use the working directory's name. Create a directory on first use. Nothing in the store is committed.
+
+- `$store/docs/` holds plans.
+- `$store/evidence/<pr-id>/lane-<n>/` holds the captures of one live lane.
+- `$store/review/` holds the captures the operator reviews.
+- `$store/arena/<slug>/candidate-<n>/` holds the output of an arena candidate that has no worktree.
 
 ## Writing the reply
 

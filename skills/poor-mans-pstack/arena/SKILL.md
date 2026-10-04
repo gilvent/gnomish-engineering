@@ -27,7 +27,7 @@ The N candidates will receive the same prompt, so the prompt is the contract.
 1. State the artifact each candidate is producing.
 2. Derive the rubric. State what success looks like for *this* task, then turn it into 3-6 concrete gradeable criteria. The rubric is the picker's tool in Phase D. Candidates only see the task.
 3. Pick the runners. Use `arena runners` from `~/.claude/poor-mans-pstack-models.md` when present; otherwise default to one each on `pstack-sonnet-5-high`, `pstack-fable-5-1-high`, `pstack-opus-5-5-high`. Spawn more when the arena covers multiple design directions. Same agent N times when the work is generation-bound rather than judgment-sensitive.
-4. Assign output paths. Each candidate writes to its own location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per [Separate Before Serializing Shared State](../principle-separate-before-serializing-shared-state/SKILL.md).
+4. Assign output paths. Each candidate writes to its own location (a git worktree where possible, otherwise `arena/<slug>/candidate-<n>/` in the agent store, `~/.poteto-furnace/<repo>/`), per [Separate Before Serializing Shared State](../principle-separate-before-serializing-shared-state/SKILL.md).
 
 ## Phase B: Fan out
 
