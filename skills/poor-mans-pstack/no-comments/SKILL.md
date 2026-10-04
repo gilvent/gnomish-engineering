@@ -7,7 +7,7 @@ description: "Strip comments before review with an independent reviewer pass, fi
 
 An independent reviewer pass flags comments for deletion; you inspect its report, act on the accepted findings, and offer to encode any real constraint the comments claimed. The reviewer's value is a fresh perspective that did not write the code, so defer to it and let it judge without your reasoning.
 
-The reviewer spawns as the `no-comments reviewer` line in `~/.claude/poor-mans-pstack-models.md`, default `pstack-comment-sicko-sonnet-5-high`. Pass the agent name as `subagent_type` and never pass `model`.
+The reviewer spawns as the `no-comments reviewer` line in `~/.claude/poor-mans-pstack-models.md`, default `pstack-comment-sicko-sonnet-5-5-high`. Pass the agent name as `subagent_type` and never pass `model`.
 
 ## Scope
 

@@ -4,7 +4,7 @@ import process from "node:process";
 
 const RULE =
 	"Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.";
-const LANES = "Lanes at the PR head, one at a time";
+const LANES = /One worker on `[^`<>]+` at the PR head/;
 const SUB_BLOCKS = [
 	"Depends on.",
 	"Files.",
@@ -17,7 +17,7 @@ const SUB_BLOCKS = [
 	"Merge.",
 ];
 const PROGRAM_H3 = ["Arm the program", "Assign the owner", "PR mechanics", "Verdict and merge", "Boot recipe"];
-const PROGRAM_MARKERS = ["Re-read them at every PR boundary", "zero-writes"];
+const PROGRAM_MARKERS = ["/loop 1h", "status message", "zero-writes"];
 const HOW_TO_READ_MARKERS = [
 	"One box is one unit of work",
 	"names the evidence",
@@ -136,7 +136,7 @@ for (const pr of prSections) {
 
 	const live = block("Verify, live.");
 	if (live) {
-		if (!live.rest.includes(LANES)) fail(live.n, `${pr.title}: Verify, live lacks "${LANES}"`);
+		if (!LANES.test(live.rest)) fail(live.n, `${pr.title}: Verify, live lacks "One worker on \`<swarm workers agent>\` at the PR head" with the agent filled in`);
 		const lanes = boxes(live.lines).map((b) => ({ ...b, m: b.text.match(/^Lane (\d+)\. /) }));
 		const numbers = lanes.filter((b) => b.m).map((b) => Number(b.m[1])).sort((a, b) => a - b);
 		const expected = numbers.map((_, i) => i + 1);
@@ -153,7 +153,9 @@ for (const pr of prSections) {
 	const perf = block("Verify, perf.");
 	if (perf) {
 		const items = boxes(perf.lines).map((b) => b.text.split(" ")[0]);
-		if (items.join("|") !== PERF_ITEMS.join("|")) fail(perf.n, `${pr.title}: perf boxes are [${items.join(", ")}], expected [${PERF_ITEMS.join(", ")}]`);
+		if (perf.rest.slice(RULE.length).trim().startsWith("None.")) {
+			if (items.length) fail(perf.n, `${pr.title}: Verify, perf says None but has boxes`);
+		} else if (items.join("|") !== PERF_ITEMS.join("|")) fail(perf.n, `${pr.title}: perf boxes are [${items.join(", ")}], expected [${PERF_ITEMS.join(", ")}]`);
 	}
 
 	const gate = block("Review gate.");

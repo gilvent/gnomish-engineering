@@ -75,7 +75,7 @@ The other pstack categories (real-time team chat, infrastructure observability, 
 Launch all matching investigators in a single message so they run concurrently. Don't ask one agent to cover multiple MCPs.
 
 Subagent config (each):
-- `subagent_type`: the `why investigators` line, default `pstack-sonnet-5-high`
+- `subagent_type`: the `why investigators` line, default `pstack-sonnet-5-5-high`
 - Investigators need their MCP tools and shouldn't write anything.
 
 Each investigator gets:

@@ -5,7 +5,7 @@ description: "Configure the models and effort levels the poor-mans-pstack skills
 
 # Setup poor-mans-pstack
 
-Write `~/.claude/poor-mans-pstack-models.md`, a per-role sheet you include from your global `CLAUDE.md`, and generate the Claude Code agent definitions it names. Each skill names its role's default inline, and step 5 lists them all; the sheet adapts those defaults to the models you have access to. The role keys follow upstream pstack's granular per-skill convention (`how explorer`, `why investigators`, `arena runners`, `architect runners`, `interrogate reviewers`, and so on), so each skill reads its own line. A **panel** key (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) takes a comma-separated list and spawns one subagent per entry; every other key takes a single value. This is where cost is tuned: a shorter panel, a cheaper model, or a lower effort costs less per invocation.
+Write `~/.claude/poor-mans-pstack-models.md`, a per-role sheet you include from your global `CLAUDE.md`, and generate the Claude Code agent definitions it names. Each skill names its role's default inline, and step 5 lists them all; the sheet adapts those defaults to the models you have access to. The role keys follow upstream pstack's granular per-skill convention (`how explorer`, `why investigators`, `arena runners`, `swarm workers`, `architect runners`, `interrogate reviewers`, and so on), so each skill reads its own line. A **panel** key (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) takes a comma-separated list and spawns one subagent per entry; every other key takes a single value. This is where cost is tuned: a shorter panel, a cheaper model, or a lower effort costs less per invocation.
 
 ## Why agent definitions
 
@@ -17,7 +17,7 @@ A generated agent is named `pstack-[<template>-]<model>-<effort>[-ro]`, where `<
 
 - `pstack-opus-4-8-high` runs `claude-opus-4-8` at `high` effort on the general-purpose template.
 - `pstack-baked-poteto-opus-5-5-medium` runs `claude-opus-5-5` at `medium` effort on the baked-poteto template.
-- `pstack-comment-sicko-sonnet-5-high` runs `claude-sonnet-5` at `high` effort on the Comment Sicko template.
+- `pstack-comment-sicko-sonnet-5-5-high` runs `claude-sonnet-5-5` at `high` effort on the Comment Sicko template.
 - `pstack-haiku-4-5-20251001-low` runs `claude-haiku-4-5-20251001` at `low` effort.
 - `pstack-opus-4-8` (no effort segment) runs `claude-opus-4-8` at the model's default effort.
 - A trailing `-ro` makes the agent read-only: `disallowedTools: Edit, Write, NotebookEdit`. Bash stays available, so `-ro` stops accidental edits but is not a sandbox. Add `-ro` to a role only when the user asks for read-only subagents during setup.
@@ -32,7 +32,7 @@ Upstream pstack spawns three kinds of subagent, and each has a template here. Th
 
 | Template | Stands in for upstream's | Name segment | Roles |
 |---|---|---|---|
-| [references/general-purpose.md](references/general-purpose.md) | Cursor's built-in general-purpose type, which the routed workflow skills spawn | none | `how explorer`, `how explainer`, `why investigators`, `why synthesizer`, `arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`, `maintain-verification readers` |
+| [references/general-purpose.md](references/general-purpose.md) | Cursor's built-in general-purpose type, which the routed workflow skills spawn | none | `how explorer`, `how explainer`, `why investigators`, `why synthesizer`, `arena runners`, `arena cross-judge pool`, `swarm workers`, `architect runners`, `interrogate reviewers`, `maintain-verification readers` |
 | [references/baked-poteto-agent.md](references/baked-poteto-agent.md) | `agents/poteto-agent.md`, which every playbook step spawns | `baked-poteto` | `feature`, `refactoring`, `bug-fix` |
 | [references/comment-sicko.md](references/comment-sicko.md) | `agents/comment-sicko.md`, which the `no-comments` skill spawns | `comment-sicko` | `no-comments reviewer` |
 
@@ -70,18 +70,19 @@ Write `~/.claude/poor-mans-pstack-models.md` with the shape below. Overwrite the
 ```markdown
 # poor-mans-pstack model configuration
 
-Per-role agents for the poor-mans-pstack skills. Each skill names its role's default; the values here override it. Delete a line to fall back to the default. Each value names a `pstack-[<template>-]<model>-<effort>[-ro]` agent definition that `/setup-poor-mans-pstack` generates; the playbook roles carry the `baked-poteto` template segment and `no-comments reviewer` carries `comment-sicko`. A skill spawns it with `subagent_type` set to that name and no `model`. A panel key (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) is a comma-separated list, one subagent per entry; every other key is a single agent. A value of `inherit-parent` or `auto` (a whole single-agent line, or one panel entry) spawns `general-purpose` with no `model`, on the parent session's model. The keys follow upstream pstack's per-skill convention: `how`, `why`, `arena`, `architect`, and `interrogate` name their own roles; `no-comments` and `maintain-verification-skill` name theirs; `feature`, `refactoring`, and `bug-fix` are the per-playbook implementation tiers. Interrogate's lead judgment stays in the main session, so it has no line. Edit this file by re-running `/setup-poor-mans-pstack`, which regenerates the agents to match.
+Per-role agents for the poor-mans-pstack skills. Each skill names its role's default; the values here override it. Delete a line to fall back to the default. Each value names a `pstack-[<template>-]<model>-<effort>[-ro]` agent definition that `/setup-poor-mans-pstack` generates; the playbook roles carry the `baked-poteto` template segment and `no-comments reviewer` carries `comment-sicko`. A skill spawns it with `subagent_type` set to that name and no `model`. A panel key (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) is a comma-separated list, one subagent per entry; every other key is a single agent. A value of `inherit-parent` or `auto` (a whole single-agent line, or one panel entry) spawns `general-purpose` with no `model`, on the parent session's model. The keys follow upstream pstack's per-skill convention: `how`, `why`, `arena`, `swarm`, `architect`, and `interrogate` name their own roles; `no-comments` and `maintain-verification-skill` name theirs; `feature`, `refactoring`, and `bug-fix` are the per-playbook implementation tiers. Interrogate's lead judgment stays in the main session, so it has no line. Edit this file by re-running `/setup-poor-mans-pstack`, which regenerates the agents to match.
 
-how explorer: pstack-sonnet-5-high
+how explorer: pstack-sonnet-5-5-high
 how explainer: pstack-opus-5-5-high
-why investigators: pstack-sonnet-5-high
+why investigators: pstack-sonnet-5-5-high
 why synthesizer: pstack-opus-5-5-high
-arena runners: pstack-sonnet-5-high, pstack-fable-5-1-high, pstack-opus-5-5-high
-arena cross-judge pool: pstack-sonnet-5-high, pstack-opus-5-5-high
+arena runners: pstack-sonnet-5-5-high, pstack-fable-5-1-high, pstack-opus-5-5-high
+arena cross-judge pool: pstack-sonnet-5-5-high, pstack-opus-5-5-high
+swarm workers: pstack-sonnet-5-5-high
 architect runners: pstack-fable-5-1-high, pstack-opus-5-5-high
-interrogate reviewers: pstack-opus-5-5-high, pstack-sonnet-5-high
-no-comments reviewer: pstack-comment-sicko-sonnet-5-high
-maintain-verification readers: pstack-sonnet-5-high
+interrogate reviewers: pstack-opus-5-5-high, pstack-sonnet-5-5-high
+no-comments reviewer: pstack-comment-sicko-sonnet-5-5-high
+maintain-verification readers: pstack-sonnet-5-5-high
 feature: pstack-baked-poteto-opus-5-5-medium
 refactoring: pstack-baked-poteto-opus-5-5-medium
 bug-fix: pstack-baked-poteto-opus-5-5-medium
@@ -109,11 +110,11 @@ Tell the user where the sheet and the agents were written, that the sheet loads 
 
 ## Models
 
-- Available Claude models: Opus 5.5 (`claude-opus-5-5`), Opus 5 (`claude-opus-5`), Opus 4.8 (`claude-opus-4-8`), Fable 5.1 (`claude-fable-5-1`), Sonnet 5 (`claude-sonnet-5`), Haiku 4.5 (`claude-haiku-4-5-20251001`)
+- Available Claude models: Opus 5.5 (`claude-opus-5-5`), Opus 5 (`claude-opus-5`), Opus 4.8 (`claude-opus-4-8`), Fable 5.1 (`claude-fable-5-1`), Sonnet 5.5 (`claude-sonnet-5-5`), Haiku 4.5 (`claude-haiku-4-5-20251001`)
 - Effort levels: `low`, `medium`, `high`, `xhigh`, `max`. Every default runs at `high` except the implementation tiers, which run at `medium`
-- Single-agent read/search roles default to the cheap model: `how explorer`, `why investigators`, and `maintain-verification readers` each `pstack-sonnet-5-high`, and `no-comments reviewer` `pstack-comment-sicko-sonnet-5-high`
+- Single-agent read/search roles default to the cheap model: `how explorer`, `why investigators`, `swarm workers`, and `maintain-verification readers` each `pstack-sonnet-5-5-high`, and `no-comments reviewer` `pstack-comment-sicko-sonnet-5-5-high`
 - Single-agent drafting roles: `how explainer` and `why synthesizer` each `pstack-opus-5-5-high`
-- Panel defaults: `arena runners` is `pstack-sonnet-5-high, pstack-fable-5-1-high, pstack-opus-5-5-high`; `arena cross-judge pool` is `pstack-sonnet-5-high, pstack-opus-5-5-high`; `architect runners` is `pstack-fable-5-1-high, pstack-opus-5-5-high`; `interrogate reviewers` is `pstack-opus-5-5-high, pstack-sonnet-5-high`. On one subscription these are distinct tiers, not distinct families, so a panel buys tier diversity, not model-family diversity
+- Panel defaults: `arena runners` is `pstack-sonnet-5-5-high, pstack-fable-5-1-high, pstack-opus-5-5-high`; `arena cross-judge pool` is `pstack-sonnet-5-5-high, pstack-opus-5-5-high`; `architect runners` is `pstack-fable-5-1-high, pstack-opus-5-5-high`; `interrogate reviewers` is `pstack-opus-5-5-high, pstack-sonnet-5-5-high`. On one subscription these are distinct tiers, not distinct families, so a panel buys tier diversity, not model-family diversity
 - Interrogate's lead judgment and arena's Phase D pick have no line; they run in the main session
 - Per-playbook implementation tiers: feature, refactoring, and bug-fix each default to `pstack-baked-poteto-opus-5-5-medium`, one line per playbook so you can tune them apart
 - No default is read-only; `-ro` appears only where the user asked for it
