@@ -4,7 +4,7 @@ import process from "node:process";
 
 const RULE =
 	"Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked.";
-const LANES = /One worker on `[^`<>]+` at the PR head/;
+const LANES = /One worker per lane on `[^`<>]+` at the PR head/;
 const SUB_BLOCKS = [
 	"Depends on.",
 	"Files.",
@@ -16,7 +16,7 @@ const SUB_BLOCKS = [
 	"Review gate.",
 	"Merge.",
 ];
-const PROGRAM_H3 = ["Arm the program", "Assign the owner", "PR mechanics", "Verdict and merge", "Boot recipe"];
+const PROGRAM_H3 = ["Arm the program", "Spawn owners", "PR mechanics", "Verdict and merge", "Boot recipe"];
 const PROGRAM_MARKERS = ["/loop 1h", "status message", "zero-writes"];
 const HOW_TO_READ_MARKERS = [
 	"One box is one unit of work",
@@ -136,7 +136,7 @@ for (const pr of prSections) {
 
 	const live = block("Verify, live.");
 	if (live) {
-		if (!LANES.test(live.rest)) fail(live.n, `${pr.title}: Verify, live lacks "One worker on \`<swarm workers agent>\` at the PR head" with the agent filled in`);
+		if (!LANES.test(live.rest)) fail(live.n, `${pr.title}: Verify, live lacks "One worker per lane on \`<swarm workers agent>\` at the PR head" with the agent filled in`);
 		const lanes = boxes(live.lines).map((b) => ({ ...b, m: b.text.match(/^Lane (\d+)\. /) }));
 		const numbers = lanes.filter((b) => b.m).map((b) => Number(b.m[1])).sort((a, b) => a - b);
 		const expected = numbers.map((_, i) => i + 1);
@@ -145,7 +145,7 @@ for (const pr of prSections) {
 		}
 		for (const lane of lanes) {
 			if (!lane.m) fail(lane.n, `${pr.title}: live box is not a lane`);
-			else if (!/Save `[^`]+`/.test(lane.text)) fail(lane.n, `${pr.title}: lane ${lane.m[1]} names no capture`);
+			else if (!/Save `[^`]+`/.test(lane.text)) fail(lane.n, `${pr.title}: lane ${lane.m[1]} names no screenshot`);
 			else if (!lane.text.includes("Pass when")) fail(lane.n, `${pr.title}: lane ${lane.m[1]} has no pass predicate`);
 		}
 	}
@@ -166,7 +166,7 @@ for (const pr of prSections) {
 		} else {
 			const text = gate.lines.map((l) => l.text).join("\n");
 			if (gateBoxes.length === 0) fail(gate.n, `${pr.title}: Review gate has no box`);
-			for (const word of ["capture", "operator"]) {
+			for (const word of ["screenshot", "operator"]) {
 				if (!text.includes(word)) fail(gate.n, `${pr.title}: Review gate lacks "${word}"`);
 			}
 		}
