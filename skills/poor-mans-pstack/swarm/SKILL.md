@@ -7,6 +7,8 @@ description: "Fan out N parallel workers, drain them, and return one report. Use
 
 Fan out N parallel workers. They may cover separate slices, race the same brief, or mix both. The parent waits, aggregates, and returns one report.
 
+Assume a single machine. Workers run in parallel across machines only when the infrastructure for it is explicitly stated, such as agents spawned on independent machines or VMs. On one machine, workers run in parallel only when their work does not collide on the machine's resources (ports, processes) or on local state. Workers that collide run one at a time.
+
 ## Start
 
 Open a todolist with one entry per phase before launching anything.
