@@ -47,7 +47,9 @@ You own every subagent's work. Review the diff and read its actual output artifa
 
 ## Agent store
 
-`~/.poteto-furnace/` is the agent store. Every file a run keeps outside the repository goes there: plans, lane captures, review captures, and candidate output. Never write them under `/tmp` or any other machine path. Each repository has its own directory in the store, named after the main checkout, so every worktree of one repository shares it.
+The agent store holds every file a run keeps outside the repository: plans, lane captures, review captures, and candidate output. When the operator names a store, that path is `$store`. Otherwise the store defaults to `~/.poteto-furnace/`. Never write these files under `/tmp` or any other machine path the operator did not name.
+
+In the default store, each repository has its own directory, named after the main checkout, so every worktree of one repository shares it.
 
 ```bash
 store="$HOME/.poteto-furnace/$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")"
