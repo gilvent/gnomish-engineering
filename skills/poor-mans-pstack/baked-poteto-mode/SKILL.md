@@ -17,6 +17,7 @@ The entry point of poor-mans-pstack, an implementation-focused port of the pstac
 - Before writing any file a run keeps outside the repository, read **Agent store** below.
 - Before any subagent or model choice, read **Subagents** below; configure agents with `/setup-poor-mans-pstack`.
 - Before declaring done, verify per Prove It Works.
+- Shipping UI / IDE / CLI → the matching control skill: **control-cli** (CLIs and TUIs) or **control-ui** (browser / Electron / web UIs). For bug fixes, reproduce first on the same surface yourself. Hand to the user only under the narrow Bug fix step 1 exception.
 - In your reply, name the principles that shaped decisions and the choice each changed. A sentence per principle carries both. A citation must trace to a real choice the principle's rule drove; a citation with no decision behind it means you skipped its file.
 
 ## Autonomy
@@ -61,6 +62,7 @@ Outside a git repository, use the working directory's name. Create a directory o
 - `$store/evidence/<pr-id>/lane-<n>/` holds the captures of one live lane.
 - `$store/review/` holds the captures the operator reviews.
 - `$store/arena/<slug>/candidate-<n>/` holds the output of an arena candidate that has no worktree.
+- `$store/harness/` holds the temporary harnesses and captures of the **control-cli** and **control-ui** skills.
 
 ## Writing the reply
 
