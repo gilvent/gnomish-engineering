@@ -36,7 +36,7 @@ Upstream pstack spawns three kinds of subagent, and each has a template here. Th
 | [references/baked-poteto-agent.md](references/baked-poteto-agent.md) | `agents/poteto-agent.md`, which every playbook step spawns | `baked-poteto` | `feature`, `refactoring`, `bug-fix` |
 | [references/comment-sicko.md](references/comment-sicko.md) | `agents/comment-sicko.md`, which the `no-comments` skill spawns | `comment-sicko` | `no-comments reviewer` |
 
-A general-purpose agent follows its task prompt and nothing else. A baked-poteto agent loads the **baked-poteto-mode** skill before any work, so a playbook delegate works under the same playbooks and principles as the main session. A Comment Sicko agent carries the comment-review rules, so the `no-comments` skill passes only the scope.
+A general-purpose agent follows its task prompt and nothing else. A Comment Sicko agent carries the comment-review rules, so the `no-comments` skill passes only the scope.
 
 ## Steps
 
