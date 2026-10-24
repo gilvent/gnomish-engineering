@@ -110,7 +110,7 @@ Tell the user where the sheet and the agents were written, that the sheet loads 
 
 ## Models
 
-- Available Claude models: Opus 5.5 (`claude-opus-5-5`), Opus 5 (`claude-opus-5`), Opus 4.8 (`claude-opus-4-8`), Fable 5.1 (`claude-fable-5-1`), Sonnet 5.5 (`claude-sonnet-5-5`), Haiku 4.5 (`claude-haiku-4-5-20251001`)
+- Available Claude models: Opus 5.5 (`claude-opus-5-5`), Fable 5.1 (`claude-fable-5-1`), Sonnet 5.5 (`claude-sonnet-5-5`), Haiku 5.5 (`claude-haiku-5-5`)
 - Effort levels: `low`, `medium`, `high`, `xhigh`, `max`. Every default runs at `high` except the implementation tiers, which run at `medium`
 - Single-agent read/search roles default to the cheap model: `how explorer`, `why investigators`, `swarm workers`, and `maintain-verification readers` each `bpstack-sonnet-5-5-high`, and `no-comments reviewer` `bpstack-comment-sicko-sonnet-5-5-high`
 - Single-agent drafting roles: `how explainer` and `why synthesizer` each `bpstack-opus-5-5-high`
