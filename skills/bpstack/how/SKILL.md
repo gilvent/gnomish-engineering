@@ -7,7 +7,7 @@ description: "Use for \"how does X work\", code walkthroughs before changing som
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Each role below reads its line in `~/.claude/poor-mans-pstack-models.md`, which `/setup-poor-mans-pstack` writes. Pass the line's agent name as `subagent_type` and never pass `model`. An `inherit-parent` or `auto` value means `general-purpose` with no `model`. If the sheet or the line is missing, use the default named here. If this session lacks a named agent, spawn `general-purpose` with the nearest `model` alias and say so.
+Each role below reads its line in `~/.claude/bpstack-models.md`, which `/setup-bpstack` writes. Pass the line's agent name as `subagent_type` and never pass `model`. An `inherit-parent` or `auto` value means `general-purpose` with no `model`. If the sheet or the line is missing, use the default named here. If this session lacks a named agent, spawn `general-purpose` with the nearest `model` alias and say so.
 
 ## Step 1. Assess Complexity
 
@@ -22,7 +22,7 @@ When in doubt, take the simple path.
 
 Decompose the question into 2 to 4 exploration angles, each a distinct slice of the subsystem. Spawn all explorers in a single message:
 
-- `subagent_type`: the `how explorer` line, default `pstack-sonnet-5-5-high`
+- `subagent_type`: the `how explorer` line, default `bpstack-sonnet-5-5-high`
 
 Each explorer gets the prompt in `references/explorer-prompt.md` with its angle filled in. Then go to Step 3.
 
@@ -30,7 +30,7 @@ Each explorer gets the prompt in `references/explorer-prompt.md` with its angle 
 
 Spawn one `Agent` subagent that explores and explains in one pass:
 
-- `subagent_type`: the `how explainer` line, default `pstack-opus-5-5-high`
+- `subagent_type`: the `how explainer` line, default `bpstack-opus-5-5-high`
 
 Build its prompt from `references/explainer-prompt.md` without the explorer-findings section. Go to Step 4.
 
@@ -38,7 +38,7 @@ Build its prompt from `references/explainer-prompt.md` without the explorer-find
 
 Once all explorers have returned, spawn one `Agent` subagent to synthesize their findings into one explanation:
 
-- `subagent_type`: the `how explainer` line, default `pstack-opus-5-5-high`
+- `subagent_type`: the `how explainer` line, default `bpstack-opus-5-5-high`
 
 Build its prompt from `references/explainer-prompt.md` with every explorer's findings filled in.
 

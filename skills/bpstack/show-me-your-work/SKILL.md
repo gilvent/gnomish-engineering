@@ -63,7 +63,7 @@ Correct the log, not the story. The audit never edits or removes a row, even an 
 
 ## Cross-model review of the trail
 
-Before handing back, spawn a subagent on a different model from the one that did the work. Pass a `pstack-*` agent that `/setup-poor-mans-pstack` generated on another model as `subagent_type`, and tell it not to edit files. On one subscription the reviewer is a different Claude tier, not the different model family upstream assumes. Self-review is not a substitute. The subagent reads the audit trail and the run's transcript, then flags what the user should pay attention to. Not a redo of the work, a scan for what's suboptimal or risky.
+Before handing back, spawn a subagent on a different model from the one that did the work. Pass a `bpstack-*` agent that `/setup-bpstack` generated on another model as `subagent_type`, and tell it not to edit files. On one subscription the reviewer is a different Claude tier, not the different model family upstream assumes. Self-review is not a substitute. The subagent reads the audit trail and the run's transcript, then flags what the user should pay attention to. Not a redo of the work, a scan for what's suboptimal or risky.
 
 - Decisions logged with weak or absent evidence.
 - Verification steps skipped or claimed without proof in the transcript.

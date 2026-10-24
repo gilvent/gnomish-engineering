@@ -9,7 +9,7 @@ Spawn one reviewer per configured model to adversarially review code changes. Ea
 
 The deliverable is a synthesized verdict. Do NOT auto-apply changes.
 
-Each role below reads its line in `~/.claude/poor-mans-pstack-models.md`, which `/setup-poor-mans-pstack` writes. Pass the line's agent name as `subagent_type` and never pass `model`. An `inherit-parent` or `auto` value means `general-purpose` with no `model`. If the sheet or the line is missing, use the default named here. If this session lacks a named agent, spawn `general-purpose` with the nearest `model` alias and say so.
+Each role below reads its line in `~/.claude/bpstack-models.md`, which `/setup-bpstack` writes. Pass the line's agent name as `subagent_type` and never pass `model`. An `inherit-parent` or `auto` value means `general-purpose` with no `model`. If the sheet or the line is missing, use the default named here. If this session lacks a named agent, spawn `general-purpose` with the nearest `model` alias and say so.
 
 ## Step 1, Determine Scope
 
@@ -34,7 +34,7 @@ Write one clear paragraph. If you're unsure about the intent, ask the user befor
 
 ## Step 3, Spawn Reviewers
 
-Launch all reviewers in a single message using the `Agent` tool. Use the `interrogate reviewers` list from `~/.claude/poor-mans-pstack-models.md` when present, one reviewer per entry, extending or shrinking the Reviewer A/B/C/D labels below to the configured entry count. Otherwise use the default, `pstack-opus-5-5-high, pstack-sonnet-5-5-high`.
+Launch all reviewers in a single message using the `Agent` tool. Use the `interrogate reviewers` list from `~/.claude/bpstack-models.md` when present, one reviewer per entry, extending or shrinking the Reviewer A/B/C/D labels below to the configured entry count. Otherwise use the default, `bpstack-opus-5-5-high, bpstack-sonnet-5-5-high`.
 
 For each reviewer:
 - `subagent_type`: the configured `interrogate reviewers` entry, or the default with no configured line
