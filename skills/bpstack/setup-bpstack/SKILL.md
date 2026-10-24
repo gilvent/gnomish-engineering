@@ -9,7 +9,7 @@ Write `~/.claude/bpstack-models.md`, a per-role sheet you include from your glob
 
 ## Why agent definitions
 
-The `Agent` tool's `model` parameter accepts only the aliases `sonnet`, `opus`, `haiku`, and `fable`, so a call cannot pin Opus 4.8 next to Opus 5 or choose an effort level. An agent definition can: its frontmatter `model:` takes a full model ID and `effort:` takes `low`, `medium`, `high`, `xhigh`, or `max`. So every sheet value is the name of a generated agent, and the skills spawn it as `subagent_type` without passing `model`.
+The `Agent` tool's `model` parameter accepts only the aliases `sonnet`, `opus`, `haiku`, and `fable`, so a call cannot pin Opus 4.8 next to Opus 5. Its `effort` parameter is only for an effort the user explicitly asks for on that spawn, so it cannot carry a per-role effort either. An agent definition can: its frontmatter `model:` takes a full model ID and `effort:` takes `low`, `medium`, `high`, `xhigh`, or `max`. So every sheet value is the name of a generated agent, and the skills spawn it as `subagent_type` without passing `model`.
 
 ## Agent names
 

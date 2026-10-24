@@ -31,7 +31,7 @@ Upstream pstack skills use Cursor names. When you sync or port an upstream skill
 
 ## setup-bpstack
 
-`setup-bpstack` replaces `setup-pstack`. The `Agent` tool's `model` takes only the aliases `opus`, `sonnet`, `haiku`, and `fable`, so a spawn cannot pin a model ID or an effort. An agent definition can, so bpstack generates one per model and effort it uses:
+`setup-bpstack` replaces `setup-pstack`. The `Agent` tool's `model` takes only the aliases `opus`, `sonnet`, `haiku`, and `fable`, so a spawn cannot pin a model ID. Its `effort` parameter is only for an effort the user explicitly asks for on that spawn, so it cannot carry a per-role effort either. An agent definition pins both, so bpstack generates one per model and effort it uses:
 
 - The sheet, `~/.claude/bpstack-models.md`, has one line per role. Each value is an agent name. A panel key (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) takes a comma-separated list, one subagent per entry.
 - `setup-bpstack` writes one `~/.claude/agents/<name>.md` per distinct name in the sheet. The name is `bpstack-[<template>-]<model>-<effort>[-ro]`, and its frontmatter pins the full model ID and the effort. The template segment picks the body: none for general-purpose, `baked-poteto` for the playbook roles, `comment-sicko` for the `no-comments reviewer`. `-ro` adds `disallowedTools: Edit, Write, NotebookEdit`.
