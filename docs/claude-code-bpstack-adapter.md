@@ -60,4 +60,4 @@ Follow `setup-pstack` with these changes:
 | Cursor | Claude Code |
 | --- | --- |
 | Bugbot | Bugbot comments on a GitHub PR are ordinary review threads, so triage them with the forge command that the step gives. Skip a step that starts, waits for, or configures Bugbot when the PR has no Bugbot check or comment. |
-| Cursor cloud agents | `environment: "cloud"` maps to a worktree, as in Subagent fields. Skip a step that needs the cloud agent itself, such as its dashboard status or its own machine. |
+| Cursor cloud agents | `general-purpose` with no `model` and `isolation: "worktree"`, so the agent runs on the session's model and effort in its own worktree. Name the branch or commit it checks out. A Cursor cloud agent is never a baked-poteto delegate. Skip a step that needs the cloud agent itself, such as its dashboard status or its own machine. |
