@@ -1,0 +1,13 @@
+{
+  "name": "gnomish-engineering",
+  "owner": {
+    "name": "Alvaro"
+  },
+  "plugins": [
+    {
+      "name": "bpstack",
+      "source": "./bpstack",
+      "description": "Budget port of pstack for Claude Code: baked-poteto-mode playbooks, principle skills, and routed utility skills for a single Claude subscription."
+    }
+  ]
+}
