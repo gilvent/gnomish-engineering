@@ -63,6 +63,7 @@ Outside a git repository, use the working directory's name. Create a directory o
 - `$store/review/` holds the captures the operator reviews.
 - `$store/arena/<slug>/candidate-<n>/` holds the output of an arena candidate that has no worktree.
 - `$store/harness/` holds the temporary harnesses and captures of the **control-cli** and **control-ui** skills.
+- `$store/statechart/<slug>/` holds the TLA+ specs, views, and output folders of the **statechart** skill.
 
 ## Writing the reply
 
