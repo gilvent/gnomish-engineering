@@ -1,93 +1,121 @@
 # Render a chart
 
-Render each `.mmd` file that you show with the npm package `pele@1.9.0`, and give the user the SVG. Install Pele once, outside the repo. Write each SVG next to its `.mmd` file, with the same name. The API is at https://pele.run/api. Pass `{ limit: 1_000_000, outputLimit: 8_000_000, maxEdges: 10_000 }` as the options of `render`. Pele's defaults are smaller than a chart of 500 states can be. When Pele throws a `PeleError`, show the user the Mermaid text and the error.
+Render each `.mmd` file that you show with the npm package `pele@1.9.0`, and give the user the SVG. Write each SVG next to its `.mmd` file, with the same name. The API is at https://pele.run/api. When Pele throws a `PeleError`, show the user the Mermaid text and the error.
 
-## Colors
+The chart uses the highlighter design: each state is a swipe of marker behind handwriting, in the font Shantell Sans, with hand-drawn arrows. Each SVG has all of this in it, so it needs no other file, and it follows the light or dark setting of the viewer.
+
+## Render
+
+Install these packages once, outside the repo:
+
+```sh
+npm install pele@1.9.0 @fontsource/shantell-sans@5.3.0 opentype.js@1.3.4
+```
+
+Save the CSS from **Design** as `highlighter.css`, the filters from **Design** as `highlighter-defs.svg`, and this script as `render.mjs` in the same folder. Run `node render.mjs CHART.mmd highlighter.css highlighter-defs.svg CHART.svg`.
+
+```js
+import fs from "node:fs";
+import { createRequire } from "node:module";
+import opentype from "opentype.js";
+import { render } from "pele";
+
+const fontFile = createRequire(import.meta.url).resolve(
+  "@fontsource/shantell-sans/files/shantell-sans-latin-400-normal.woff",
+);
+const bytes = fs.readFileSync(fontFile);
+const font = opentype.parse(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.length));
+
+const { svg } = render(fs.readFileSync(process.argv[2], "utf8"), {
+  limit: 1_000_000,
+  outputLimit: 8_000_000,
+  maxEdges: 10_000,
+  measurer: { width: (text, size) => font.getAdvanceWidth(text, size) },
+  fontFamily: "Shantell Sans",
+  fontSize: 17,
+});
+
+const fontFace = `@font-face { font-family: "Shantell Sans"; src: url(data:font/woff;base64,${bytes.toString("base64")}) format("woff"); }`;
+const style = `<style>${fontFace}\n${fs.readFileSync(process.argv[3], "utf8")}</style>`;
+const defs = fs.readFileSync(process.argv[4], "utf8");
+const rootEnd = svg.indexOf(">") + 1;
+fs.writeFileSync(process.argv[5], svg.slice(0, rootEnd) + style + defs + svg.slice(rootEnd));
+```
+
+The script does these things:
+
+- It passes the render limits, because Pele's defaults are smaller than a chart of 500 states can be.
+- It measures text with the real font, because Pele cannot measure a font in Node. Without the `measurer`, labels do not fit their boxes.
+- It puts the font in the SVG, so that the chart looks the same on a computer that does not have the font. The file is about 100 KB larger. The font has Latin letters only.
+- It puts the `<style>` and the filters first in the SVG.
+
+## Design
 
 Pele ignores Mermaid `theme` and `themeVariables`. Set its `--pele-*` CSS variables on `.pele`. https://pele.run/theming lists them. The command gives each state the color class of its group, such as `class sN teal`. It marks each bad state with `class sN breaks` or `class sN mayBreak`, each state on the shortest path to a bug with `class sN bugPath`, and each state that a PROPERTY counterexample repeats forever with `class sN repeats`. Pele puts these classes on the state's node. Color the classes with CSS.
 
-The `.mmd` file has a `classDef` line for `breaks` and for `mayBreak`, so that any Mermaid viewer shows the bug marks. It has no `classDef` for the group colors, `bugPath`, or `repeats`. Pele writes each `classDef` color as a `style` attribute on the node, and a `style` attribute wins over a normal CSS rule. So the rules for the marks below use `!important`. Without it, a dark theme keeps the light mark colors. A bug mark sets the fill and the text, and `bugPath` and `repeats` set the border. Put the mark rules after the group colors, so that a mark shows over the group color.
+The `.mmd` file has a `classDef` line for `breaks` and for `mayBreak`, so that any Mermaid viewer shows the bug marks. It has no `classDef` for the group colors, `bugPath`, or `repeats`. Pele writes each `classDef` color as a `style` attribute on the node, and a `style` attribute wins over a normal CSS rule. So the rules for the marks below use `!important`. Without it, a dark theme keeps the light mark colors. A bug mark sets the swipe color and the text, and `bugPath` and `repeats` set a pen line around the swipe. Put the mark rules after the group colors, so that a mark shows over the group color. A state with no group gets the yellow swipe of `--pele-surface`.
 
-These colors are suggestions. They are the colors of the old skill. Put them in a `<style>` element at the start of each SVG. Each SVG then follows the light or dark setting of the viewer.
+The CSS hides the boxes that Pele draws around the regions and the Legend, and keeps their titles.
 
 ```css
 .pele {
-  --pele-bg: #ffffff;
-  --pele-fg: #1c1c1c;
-  --pele-muted: #656565;
-  --pele-line: #808080;
-  --pele-surface: #fcfcfc;
-  --pele-surface-alt: #f1f1f1;
-  --pele-border: #c9c9c9;
+  --pele-bg: #ffffff; --pele-fg: #1d1f24; --pele-muted: #4c5059; --pele-line: #1d1f24;
+  --pele-surface: #fff27a; --pele-surface-alt: transparent; --pele-border: transparent;
+  --pele-font: "Shantell Sans", "Trebuchet MS", sans-serif;
+  background: var(--pele-bg);
 }
-.pele .blue rect { fill: #c3e0ff; }
-.pele .orange rect { fill: #f0d3bf; }
-.pele .purple rect { fill: #e3d5ff; }
-.pele .yellow rect { fill: #f0dcbf; }
-.pele .teal rect { fill: #bfe3df; }
-.pele .tan rect { fill: #e5d9ce; }
-.pele .pink rect { fill: #ffcbe6; }
-.pele .breaks rect {
-  fill: #ffecee !important;
-  stroke: #e72e3b !important;
-  stroke-width: 2.5px !important;
-}
-.pele .breaks text {
-  fill: #cd2834 !important;
-}
-.pele .mayBreak rect {
-  fill: #fff3e6 !important;
-  stroke: #e8730c !important;
-  stroke-width: 2.5px !important;
-}
-.pele .mayBreak text {
-  fill: #b85a06 !important;
-}
-.pele .bugPath rect {
-  stroke: #1680f3 !important;
-  stroke-width: 2.5px !important;
-}
-.pele .repeats rect {
-  stroke: #9b35d6 !important;
-  stroke-width: 2.5px !important;
-  stroke-dasharray: 6 3;
-}
+.pele .pele-edges { filter: url(#hl-line); stroke-width: 1.8px; }
+.pele .pele-edges .pele-marker { stroke: none; }
+.pele .pele-edge-label rect { fill-opacity: 0.88; }
+.pele .pele-edge-label text { fill: var(--pele-muted); }
+.pele .pele-cluster rect, .pele .pele-cluster > path { fill: none !important; stroke: none !important; }
+.pele .pele-node rect { stroke: none; filter: url(#hl-swipe); mix-blend-mode: multiply; }
+.pele .blue rect { fill: #8fdcff; }
+.pele .orange rect { fill: #ffc98a; }
+.pele .purple rect { fill: #d8c2ff; }
+.pele .yellow rect { fill: #fff27a; }
+.pele .teal rect { fill: #9fecd8; }
+.pele .tan rect { fill: #e8d6b8; }
+.pele .pink rect { fill: #ffbfe0; }
+.pele .breaks rect { fill: #ff9db0 !important; stroke: none !important; }
+.pele .breaks text { fill: #1d1f24 !important; }
+.pele .mayBreak rect { fill: #ffb38a !important; stroke: none !important; }
+.pele .mayBreak text { fill: #1d1f24 !important; }
+.pele .bugPath rect { stroke: #1a66d6 !important; stroke-width: 2.5px !important; }
+.pele .repeats rect { stroke: #8a2fd0 !important; stroke-width: 2.5px !important; stroke-dasharray: 6 3; }
 @media (prefers-color-scheme: dark) {
   .pele {
-    --pele-bg: #1f1f1f;
-    --pele-fg: #f5f5f5;
-    --pele-muted: #acacac;
-    --pele-line: #939393;
-    --pele-surface: #121212;
-    --pele-surface-alt: #2c2c2c;
-    --pele-border: #4e4e4e;
+    --pele-bg: #17191d; --pele-fg: #f4f5f7; --pele-muted: #c0c4cc; --pele-line: #e6e8ec;
+    --pele-surface: #5f5612;
   }
-  .pele .blue rect { fill: #1b3857; }
-  .pele .orange rect { fill: #573117; }
-  .pele .purple rect { fill: #3c2e57; }
-  .pele .yellow rect { fill: #573d17; }
-  .pele .teal rect { fill: #174641; }
-  .pele .tan rect { fill: #3d3127; }
-  .pele .pink rect { fill: #57233e; }
-  .pele .breaks rect {
-    fill: #2e2021 !important;
-    stroke: #cf2b35 !important;
-  }
-  .pele .breaks text {
-    fill: #ff6463 !important;
-  }
-  .pele .mayBreak rect {
-    fill: #2e2619 !important;
-    stroke: #d0700f !important;
-  }
-  .pele .mayBreak text {
-    fill: #ffa257 !important;
-  }
-  .pele .bugPath rect {
-    stroke: #116dd2 !important;
-  }
-  .pele .repeats rect {
-    stroke: #9a3fcf !important;
-  }
+  .pele .pele-node rect { mix-blend-mode: normal; }
+  .pele .blue rect { fill: #135a7c; }
+  .pele .orange rect { fill: #6e3f12; }
+  .pele .purple rect { fill: #4a3480; }
+  .pele .yellow rect { fill: #5f5612; }
+  .pele .teal rect { fill: #125a50; }
+  .pele .tan rect { fill: #55452c; }
+  .pele .pink rect { fill: #7a2a58; }
+  .pele .breaks rect { fill: #8c2a41 !important; }
+  .pele .breaks text { fill: #ffffff !important; }
+  .pele .mayBreak rect { fill: #7c431a !important; }
+  .pele .mayBreak text { fill: #ffffff !important; }
+  .pele .bugPath rect { stroke: #5fa8ff !important; }
+  .pele .repeats rect { stroke: #c58cff !important; }
 }
+```
+
+The filters give the arrows and the swipes their rough edges. The CSS refers to them by their ids.
+
+```svg
+<defs>
+  <filter id="hl-line" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="4"/>
+    <feDisplacementMap in="SourceGraphic" scale="5"/>
+  </filter>
+  <filter id="hl-swipe" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.012" numOctaves="2" seed="9"/>
+    <feDisplacementMap in="SourceGraphic" scale="11"/>
+  </filter>
+</defs>
 ```
