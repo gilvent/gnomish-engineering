@@ -8,6 +8,11 @@
       "name": "bpstack",
       "source": "./bpstack",
       "description": "Budget port of pstack for Claude Code: baked-poteto-mode playbooks, principle skills, and routed utility skills for a single Claude subscription."
+    },
+    {
+      "name": "token-furnace",
+      "source": "./token-furnace",
+      "description": "A furnace above the prompt that burns hotter as the context window fills"
     }
   ]
 }

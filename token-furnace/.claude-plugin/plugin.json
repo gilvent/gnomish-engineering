@@ -1,0 +1,9 @@
+{
+  "name": "token-furnace",
+  "version": "0.1.0",
+  "description": "A furnace above the prompt that burns hotter as the context window fills",
+  "types": "./types/index.d.ts",
+  "author": {
+    "name": "tinker-town"
+  }
+}
