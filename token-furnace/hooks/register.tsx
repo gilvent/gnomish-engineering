@@ -98,7 +98,7 @@ export const register: Register = on => {
             <Text color={heat.color} bold>
               {heat.word}
             </Text>
-            <Box flexDirection="row">
+            <Box flexDirection="row" flexWrap="wrap">
               <Text>{`${now.percent}% of context`}</Text>
               <Text dimColor>{`  ${short(now.tokens)} / ${short(now.window)}`}</Text>
               {isWide && <Text dimColor>{'   last turns '}</Text>}
