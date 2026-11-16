@@ -15,6 +15,7 @@ const BAND = {
   },
 } as const
 const START = { surface: 'terminal', isInteractive: true, cwd: '/work' } as const
+const PIXEL = atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAXpeqz8AAAAASUVORK5CYII=')
 const TURN = { answer: 'ok', durationMs: 1, isAborted: false, turnId: 't1', reason: 'answer' } as const
 
 function standIn(on: On, context: { tokens: number }) {
@@ -27,6 +28,7 @@ function standIn(on: On, context: { tokens: number }) {
     },
   }))
   on('turn.complete', (_$, e) => ({ text: e.answer }))
+  on('fs.read', (_$, e) => ({ value: { base64: btoa(PIXEL + e.path.split('/').at(-1)) } }))
   on('ui.render', ($, e) => $.ui.resolve(e).Text({ children: 'the band beneath' }))
 }
 
@@ -39,13 +41,13 @@ test('the furnace burns hotter as the context window fills', async ($, on) => {
   const furnaces = async () => (await ui.findAll({ type: 'Image' })).map(image => image.props.source)
 
   expect(await ui.find({ type: 'Text', text: /Embers/ })).toBeDefined()
-  expect(await furnaces()).toEqual([{ file: expect.stringMatching(/\/assets\/embers\.png$/), format: 'png' }])
+  expect(await furnaces()).toEqual([{ png: btoa(`${PIXEL}embers.png`) }])
 
   context.tokens = 134_400
   await $.turn.complete(TURN)
 
   expect(await ui.find({ type: 'Text', text: /Blazing/ })).toBeDefined()
-  expect(await furnaces()).toEqual([{ file: expect.stringMatching(/\/assets\/blazing\.png$/), format: 'png' }])
+  expect(await furnaces()).toEqual([{ png: btoa(`${PIXEL}blazing.png`) }])
   expect(await ui.find({ type: 'Text', text: /67% of context/ })).toBeDefined()
   expect(await ui.find({ type: 'Text', text: /134\.4k \/ 200k/ })).toBeDefined()
   expect(await ui.find({ type: 'Text', text: /▲ \+98\.3k stoked last turn/ })).toBeDefined()
