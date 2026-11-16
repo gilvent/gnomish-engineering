@@ -98,17 +98,21 @@ export const register: Register = on => {
               alt: ' ',
               ...ICON_CELLS,
             })}
-          <Box flexDirection="column" paddingLeft={1}>
+          <Box flexDirection="column" flexShrink={0} paddingLeft={1}>
             <Text color={heat.color} bold>
               {heat.word}
             </Text>
-            <Box flexDirection="row" flexWrap="wrap">
-              <Text>{`${now.percent}% of context`}</Text>
-              <Text dimColor>{`  ${short(now.tokens)} / ${short(now.window)}`}</Text>
-              {isWide && <Text dimColor>{'   last turns '}</Text>}
-              {isWide && <Text color={heat.color}>{flames(history)}</Text>}
-              {isWide && previous !== undefined && <Text dimColor>{stoked(now.tokens - previous.tokens)}</Text>}
-            </Box>
+            <Text>{`${now.percent}% of context`}</Text>
+          </Box>
+          <Box flexDirection="column" paddingLeft={2}>
+            <Text dimColor>{`${short(now.tokens)} / ${short(now.window)}`}</Text>
+            {isWide && (
+              <Box flexDirection="row">
+                <Text dimColor>{'last turns '}</Text>
+                <Text color={heat.color}>{flames(history)}</Text>
+                {previous !== undefined && <Text dimColor>{stoked(now.tokens - previous.tokens)}</Text>}
+              </Box>
+            )}
           </Box>
         </Box>
         {await next(e)}
