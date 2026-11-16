@@ -83,14 +83,18 @@ export const register: Register = on => {
     const previous = history.at(-2)
     const heat = HEATS.find(tier => now.percent < tier.upTo) ?? MELTDOWN
     const isWide = e.props.bodyColumns >= WIDE_COLUMNS
+    const icon =
+      e.surface === 'terminal'
+        ? (await $.fs.read(`${$.plugin.root}/assets/${heat.sprite}.png`, { as: 'bytes' })).base64
+        : undefined
 
     return (
       <Box flexDirection="column">
         <Box flexDirection="row" paddingX={1}>
-          {e.surface === 'terminal' &&
+          {icon !== undefined &&
             h($.ui.resolve(e).Image, {
               key: 'furnace',
-              source: { file: `${$.plugin.root}/assets/${heat.sprite}.png`, format: 'png' },
+              source: { png: icon },
               alt: ' ',
               ...ICON_CELLS,
             })}
